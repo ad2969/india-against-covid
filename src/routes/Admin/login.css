@@ -1,0 +1,23 @@
+.admin-form-container {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+.admin-form {
+    min-width: 15em;
+    max-width: 80vw;
+    width: 50vw;
+    text-align: center;
+}
+.admin-form > div {
+    margin-top: 0.5em;
+    width: 100%;
+}
+.admin-form > button {
+    margin-top: 3em;
+    min-width: 15em;
+    width: 50%;
+}
