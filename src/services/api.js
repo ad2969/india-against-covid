@@ -12,7 +12,7 @@ export const fetchRegions = async () => {
             return {}
         }
     } catch {
-        throw "Error with firebase database"
+        throw new Error("Error with firebase database")
     }
 }
 
@@ -28,7 +28,7 @@ export const fetchCharities = async () => {
             return {}
         }
     } catch {
-        throw "Error with firebase database"
+        throw new Error("Error with firebase database")
     }
 }
 
@@ -45,7 +45,7 @@ const fetchCharityInfo = async (charityID) => {
             return {}
         }
     } catch {
-        throw "Error with firebase database"
+        throw new Error("Error with firebase database")
     }
 }
 
@@ -65,6 +65,6 @@ export const fetchRegionCharities = async (regionID) => {
             return []
         }
     } catch {
-        throw "Error with firebase database"
+        throw new Error("Error with firebase database")
     }
 }
