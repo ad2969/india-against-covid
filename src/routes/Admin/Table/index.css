@@ -1,0 +1,13 @@
+.charity-table-container {
+    margin: 1em;
+    padding: 1em;
+}
+
+.toolbar-highlight {
+    background: #ffebf2;
+}
+
+.toolbar-button {
+    margin-left: 1em;
+    cursor: pointer;
+}

@@ -14,19 +14,19 @@ function Home() {
     const [error, setError] = useState(false)
     const [dataLoaded, setDataLoaded] = useState(false)
 
-    const fetchAllData = async (regionId = null) => {
+    const fetchAllData = async (regionKey = null) => {
         try {
             const regions_response = await fetchRegions()
             setRegions(regions_response)
 
-            if(regionId) {
-                console.log(`searching for region "${regionId}"`)
-                const regionInfo = regions_response[regionId]
+            if(regionKey) {
+                console.log(`searching for region "${regionKey}"`)
+                const regionInfo = regions_response[regionKey]
                 setSelectedRegion(regionInfo)
                 console.log(`- "${regionInfo.name}" found!`)
 
                 if(regionInfo) {
-                    const charitiesInRegion = await fetchRegionCharities(regionId)
+                    const charitiesInRegion = await fetchRegionCharities(regionKey, true)
                     setCharities(charitiesInRegion)
                 }
             } else {
