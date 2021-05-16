@@ -1,0 +1,11 @@
+.AdminHome {
+    height: 100%;
+    width: 100%;
+}
+.AdminHome > .appbar {
+    flex-grow: 1;
+}
+
+.appbar-title {
+    flex-grow: 1;
+}
