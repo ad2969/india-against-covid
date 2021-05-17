@@ -71,7 +71,7 @@ const AdminHome = () => {
                     <Button color="inherit" onClick={handleLogout}><b>Logout</b></Button>
                 </Toolbar>
             </AppBar>
-            {dataLoaded && <CharityTable charities={charities} regions={regions} onRefresh={fetchAllData} />}
+            {dataLoaded && !error && <CharityTable charities={charities} regions={regions} onRefresh={fetchAllData} />}
         </div>
     )
 }
