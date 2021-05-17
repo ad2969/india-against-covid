@@ -8,10 +8,11 @@ export const fetchRegions = async () => {
             const data = snapshot.val()
             return data
         } else {
-            console.log("No state data available")
+            console.log("** No state data available")
             return {}
         }
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -24,10 +25,11 @@ export const fetchCharities = async () => {
             const data = snapshot.val()
             return data
         } else {
-            console.log("No charity data available")
+            console.log("** No charity data available")
             return {}
         }
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -41,10 +43,11 @@ const fetchCharityInfo = async (charityKey) => {
             const data = snapshot.val()
             return data
         } else {
-            console.log("Charity not found")
+            console.log("** Charity not found")
             return {}
         }
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -58,10 +61,11 @@ export const fetchAllRegionsCharities = async () => {
             const data = snapshot.val()
             return data
         } else {
-            console.log("No charity and region data")
+            console.log("** No charity and region data")
             return []
         }
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -80,10 +84,11 @@ export const fetchRegionCharities = async (regionKey, info = false) => {
                 return charitiesInRegion
             } else return data
         } else {
-            console.log("No charity data available for the given region")
+            console.log("** No charity data available for the given region")
             return []
         }
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -94,7 +99,8 @@ export const addCharity = async (params) => {
         const charitiesRef = db.ref('/charities')
         const response = await charitiesRef.push(params)
         return response
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -105,7 +111,8 @@ export const addRegionsToCharity = async (charityKey, charityName, regionKeys) =
             const regionCharityRef = db.ref(`/regions_charities/${regionKey}/${charityKey}`)
             return regionCharityRef.set(charityName)
         }))
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -116,7 +123,8 @@ export const deleteCharities = async (charityKeys) => {
             const charityRef = db.ref(`/charities/${key}`)
             return charityRef.remove()
         }))
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }
@@ -125,7 +133,8 @@ export const deleteRegionFromCharity = async (charityKey, regionKey) => {
     try {
         const regionCharityRef = db.ref(`/regions_charities/${regionKey}/${charityKey}`)
         await regionCharityRef.remove()
-    } catch {
+    } catch(err) {
+        console.error(err)
         throw new Error("Error with firebase database")
     }
 }

@@ -97,7 +97,7 @@ const CharityTable = (props) => {
         }
     
         setSelected(newSelected);
-        console.log('Selecting rows:', { newSelected })
+        console.log('Selected rows:', { newSelected })
     }
 
     // ADD CHARITY
@@ -143,6 +143,9 @@ const CharityTable = (props) => {
     const handleDeleteCharitiesConfirm = async () => {
         // delete charity information
         await deleteCharities(selected)
+        await Promise.all(selected.map((charityKey) => (
+            Promise.all(charities[charityKey].regions.map((region) => deleteRegionFromCharity(charityKey, region.key)))
+        )))
         // refresh the page
         setConfirmDeleteSelectedDialog(false)
         await onRefresh()
