@@ -92,7 +92,19 @@ export const fetchRegionCharities = async (regionKey, info = false) => {
 export const addCharity = async (params) => {
     try {
         const charitiesRef = db.ref('/charities')
-        await charitiesRef.push(params)
+        const response = await charitiesRef.push(params)
+        return response
+    } catch {
+        throw new Error("Error with firebase database")
+    }
+}
+
+export const addRegionsToCharity = async (charityKey, charityName, regionKeys) => {
+    try {
+        await Promise.all(regionKeys.map((regionKey) => {
+            const regionCharityRef = db.ref(`/regions_charities/${regionKey}/${charityKey}`)
+            return regionCharityRef.set(charityName)
+        }))
     } catch {
         throw new Error("Error with firebase database")
     }

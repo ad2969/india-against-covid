@@ -32,7 +32,12 @@ import {
 } from '@material-ui/icons'
 import "./index.css"
 
-import { addCharity, deleteCharities, deleteRegionFromCharity } from '../../../services/api'
+import {
+    addCharity,
+    addRegionsToCharity,
+    deleteCharities,
+    deleteRegionFromCharity
+} from '../../../services/api'
 
 // sorting
 // regions
@@ -48,7 +53,7 @@ const CharityTable = (props) => {
         onRefresh
     } = props
 
-    const charitiesList = Object.values(charities)
+    const charitiesList = Object.entries(charities)
     const regionsList = Object.entries(regions)
 
     const [addCharityDialog, setAddCharityDialog] = useState(false)
@@ -67,7 +72,7 @@ const CharityTable = (props) => {
     
     const handleClickSelectAll = (e) => {
         if (e.target.checked) {
-          const newSelecteds = charitiesList.map((n) => n.key);
+          const newSelecteds = charitiesList.map((n) => n[0]);
           setSelected(newSelecteds);
           return;
         }
@@ -92,7 +97,7 @@ const CharityTable = (props) => {
         }
     
         setSelected(newSelected);
-        console.log({ newSelected })
+        console.log('Selecting rows:', { newSelected })
     }
 
     // ADD CHARITY
@@ -100,13 +105,16 @@ const CharityTable = (props) => {
         setAddCharityDialog(true)
     }
     const handleAddCharityConfirm = async () => {
-        await addCharity({
+        // add charity data
+        const response = await addCharity({
             name: addCharityName,
             description: addCharityDescription,
             regions: addCharityRegions,
             image_url: addCharityImageUrl,
             redirect_url: addCharityRedirectUrl
         })
+        await addRegionsToCharity(response.key, addCharityName, addCharityRegions)
+        // refresh the page
         setAddCharityDialog(false)
         await onRefresh()
         setAddCharityName('')
@@ -133,7 +141,9 @@ const CharityTable = (props) => {
         setConfirmDeleteSelectedDialog(true)
     }
     const handleDeleteCharitiesConfirm = async () => {
+        // delete charity information
         await deleteCharities(selected)
+        // refresh the page
         setConfirmDeleteSelectedDialog(false)
         await onRefresh()
         setSelected([])
@@ -150,7 +160,9 @@ const CharityTable = (props) => {
         setConfirmDeleteRegionRegionKey(regionKey)
     }
     const handleDeleteRegionConfirm = async () => {
+        // delete charity information
         await deleteRegionFromCharity(confirmDeleteRegionCharityKey, confirmDeleteRegionRegionKey)
+        // refresh the page
         setConfirmDeleteRegionDialog(false)
         setConfirmDeleteRegionCharityKey(null)
         setConfirmDeleteRegionRegionKey(null)
@@ -197,10 +209,11 @@ const CharityTable = (props) => {
                 </TableHead>
                 <TableBody>
                     {charitiesList.map((charity) => {
-                        const isItemSelected = selected.indexOf(charity.key) !== -1;
+                        const [charityKey, charityInfo] = charity
+                        const isItemSelected = selected.indexOf(charityKey) !== -1;
                         return (
                             <TableRow hover
-                                key={charity.key}
+                                key={charityKey}
                                 role="checkbox"
                                 aria-checked={isItemSelected}
                                 tabIndex={-1}
@@ -208,19 +221,19 @@ const CharityTable = (props) => {
                             >
                                 <TableCell padding="checkbox">
                                     <Checkbox checked={isItemSelected}
-                                        inputProps={{ 'aria-labelledby': charity.key }}
-                                        onClick={() => handleClickRow(charity.key)}
+                                        inputProps={{ 'aria-labelledby': charityKey }}
+                                        onClick={() => handleClickRow(charityKey)}
                                     />
                                 </TableCell>
-                                <TableCell component="th" scope="row">{charity.name}</TableCell>
-                                <TableCell align="right">{charity.description}</TableCell>
+                                <TableCell component="th" scope="row">{charityInfo.name}</TableCell>
+                                <TableCell align="right">{charityInfo.description}</TableCell>
                                 <TableCell align="right">
-                                    {charity.regions.map((region) => <Tooltip title={region.name} key={region.key}>
-                                        <Chip label={region.key} onDelete={() => handleDeleteRegion(charity.key, region.key)} color="primary" />
+                                    {charityInfo.regions.map((region) => <Tooltip title={region.name} key={region.key}>
+                                        <Chip label={region.key} onDelete={() => handleDeleteRegion(charityKey, region.key)} color="primary" />
                                     </Tooltip>)}
                                 </TableCell>
-                                <TableCell align="right">{charity.image_url}</TableCell>
-                                <TableCell align="right"><a href={charity.redirect_url}>{charity.redirect_url}</a></TableCell>
+                                <TableCell align="right">{charityInfo.image_url}</TableCell>
+                                <TableCell align="right"><a href={charityInfo.redirect_url}>{charityInfo.redirect_url}</a></TableCell>
                             </TableRow>
                         )
                     })}
@@ -239,7 +252,7 @@ const CharityTable = (props) => {
                     <InputLabel style={{ marginTop: '1em' }}>Regions</InputLabel>
                     <Select margin="dense" id="regions" label="Regions" multiple fullWidth required
                         value={addCharityRegions} onChange={handleAddCharityRegions} >
-                        {regionsList.map((region) => <MenuItem value={region[0]}>{region[1].name}</MenuItem>)}
+                        {regionsList.map((region) => <MenuItem value={region[0]} key={region[0]}>{region[1].name}</MenuItem>)}
                     </Select>
                     <TextField margin="dense" id="image_url" label="Image" fullWidth
                         value={addCharityImageUrl} onChange={(e) => setAddCharityImageUrl(e.target.value)} />
@@ -276,7 +289,8 @@ const CharityTable = (props) => {
                 open={confirmDeleteRegionDialog}
             >
                 <DialogTitle id="confirmation-dialog-title">
-                    Confirm Deleting Region "{regions[confirmDeleteRegionRegionKey]?.name}" from "{charities[confirmDeleteRegionCharityKey]?.name}?"
+                    Confirm Deleting Region "{regions[confirmDeleteRegionRegionKey] && regions[confirmDeleteRegionRegionKey].name}"
+                    from "{charities[confirmDeleteRegionCharityKey] && charities[confirmDeleteRegionCharityKey].name}"?
                 </DialogTitle>
                 <DialogActions>
                     <Button autoFocus onClick={handleDeleteRegionCancel} color="primary">Cancel</Button>

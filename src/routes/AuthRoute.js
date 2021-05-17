@@ -8,7 +8,7 @@ import { isAuthenticated } from '../services/auth'
 const AuthRoute = ({ component, redirect, ...rest }) => {
 
   const loggedIn = isAuthenticated()
-  console.log({loggedIn})
+  console.log('User is logged in?', String(loggedIn))
  
   return (
     <Route {...rest} component={loggedIn ? component : Forbidden} />
