@@ -198,8 +198,8 @@ const CharityTable = (props) => {
                 <TableHead>
                 <TableRow>
                     <TableCell padding="checkbox"><Checkbox
-                        indeterminate={selected.length > 0 && selected.length < charities.length}
-                        checked={charities.length > 0 && selected.length === charities.length}
+                        indeterminate={selected.length > 0 && selected.length < charitiesList.length}
+                        checked={charitiesList.length > 0 && selected.length === charitiesList.length}
                         onChange={handleClickSelectAll}
                         inputProps={{ 'aria-label': 'select all charities' }}
                     /></TableCell>
