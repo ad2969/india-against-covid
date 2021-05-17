@@ -22,6 +22,5 @@ export const logout = async () => {
 
 export const isAuthenticated = () => {
     const currentUser = auth.currentUser
-    console.log({currentUser})
     return !!currentUser
 }

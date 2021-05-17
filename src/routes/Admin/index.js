@@ -50,7 +50,7 @@ const AdminHome = () => {
                 }
                 charities_response[charity_key].regions = regions
             }
-            console.log({ charities_response })
+            console.log('** API GET:', { charities_response })
             setCharities(charities_response)
             setDataLoaded(true)
         } catch(err) {
