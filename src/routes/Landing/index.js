@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../../components/Header/common";
 
-function landing () {
+const Landing = () => {
 	return (
 		<div>
 			<Header SCROLL_THRESHOLD={400} logoRedirect={false} />
@@ -10,4 +10,4 @@ function landing () {
 	);
 }
 
-export default landing;
+export default Landing;
