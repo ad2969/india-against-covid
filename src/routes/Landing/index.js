@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
-function landing() {
-    return (
-        <div>
+function landing () {
+	return (
+		<div>
             landing!
-        </div>
-    )
+		</div>
+	);
 }
 
-export default landing
+export default landing;
