@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
-import "./index.css";
+import styles from "./index.module.scss";
 
 const NotFound = (props) => {
 	const {
@@ -16,7 +16,7 @@ const NotFound = (props) => {
 	const defaultReturn = () => history.goBack();
 
 	return (
-		<div className="NotFound">
+		<div className={styles.NotFound}>
 			<h1>404: Not Found</h1>
 			<p>Sorry, the page you are looking for cannot be found</p>
 			<br />

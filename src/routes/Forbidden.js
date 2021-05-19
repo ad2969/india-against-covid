@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
-import "./index.css";
+import styles from "./index.module.scss";
 
 // For redirecting from AuthRoute
 const Forbidden = () => {
@@ -12,7 +12,7 @@ const Forbidden = () => {
 	const redirected = urlParams.get("redirected");
 
 	return (
-		<div className="NotFound">
+		<div className={styles.Forbidden}>
 			<h1>403: Forbidden</h1>
 			<p>
                 Sorry! The current account does not have the necessary permissions to access the page.

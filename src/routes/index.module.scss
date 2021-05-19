@@ -1,4 +1,4 @@
-.NotFound {
+.NotFound, .Forbidden {
     height: 100%;
     width: 100%;
     position: relative;
@@ -8,7 +8,8 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
-}
-.NotFound > button {
-    margin-top: 1em;
+    
+    button {
+        margin-top: 1em;
+    }
 }
