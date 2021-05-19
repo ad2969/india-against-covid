@@ -4,11 +4,12 @@
     flex-direction: row !important;
     @include flex-center;
     width: 100% !important;
+    overflow: hidden;
 
     @include for-phone-landscape-up {
         background-color: unset !important;
         box-shadow: unset !important;
-        height: 4em;
+        height: 6.5em;
         width: min-content !important;
     }
 
@@ -17,8 +18,9 @@
         color: $white;
         display: flex;
         font-weight: bold;
+        height: 100%;
         flex-grow: 1;
-        padding: 0.5em 1.5em;
+        padding: 1em 1.5em;
         text-align: left;
         z-index: 999;
 
@@ -27,13 +29,14 @@
             border-bottom-right-radius: 2em;
             flex-grow: 0;
             transition: all 0.2s;
+            padding: 1.5em 2em;
         }
 
         svg {
             font-size: 2.5em;
             
             @include for-phone-landscape-up {
-                font-size: 3em;
+                font-size: 3.5em;
             }
         }
     }
@@ -45,7 +48,7 @@
         flex-direction: row;
         align-items: center;
         height: 100%;
-        padding: 0 0.5em 0 2em;
+        padding: 0 0.5em 0 3em;
         transform: translateX(-80%);
         transition: all 0.2s;
         z-index: 998;
@@ -72,14 +75,17 @@
     }
 }
 
+.header-narrow-dropdown {
+    padding: 0 2em;
 
-.header-narrow-dropdown > .MuiPaper-root {
-    background-color: $mono2;
-    color: $white;
-
-    li {
-        text-align: right;
-        padding-left: 3em;
-        padding-right: 1em;
+    .MuiPaper-root {
+        background-color: $mono2;
+        color: $white;
+    
+        li {
+            text-align: right;
+            padding-left: 3em;
+            padding-right: 1em;
+        }
     }
 }
