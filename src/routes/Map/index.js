@@ -63,7 +63,7 @@ const Map = () => {
 	}, [history]);
 
 	return (
-		<div>
+		<div className="Page">
 			<MapHeader reloadPage={refreshPage} />
 			<div>Map will be displayed here</div>
 			<br/>
