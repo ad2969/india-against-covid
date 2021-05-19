@@ -9,23 +9,29 @@
 
     .header-title {
         flex-grow: 1;
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        white-space: nowrap;
     }
     .header-title > .header-text {
         user-select: none;
         color: white;
         font-weight: bold;
+        margin-right: 1em;
     }
     .header-title > .header-button {
         border: 1px solid white;
         border-radius: 1em;
         color: white;
         font-size: 0.5em;
-        margin-left: 2em;
+        margin: 0 1em 0 1em;
         padding: 0.5em;
+        display: inline-block;
     }
 
-    .header-button {
+    .header-logout {
         padding-top: 0;
-        padding-bottom: 0;
+        min-width: max-content;
     }
 }
