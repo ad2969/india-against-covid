@@ -34,6 +34,7 @@ const AdminHeader = () => {
 					<Button onClick={() => { history.push("/home"); }} className="header-button"><b>Charity Map</b></Button>
 					<Button onClick={() => { history.push("/about"); }} className="header-button"><b>About Page</b></Button>
 					<Button onClick={() => { history.push("/contact"); }} className="header-button"><b>Contact Page</b></Button>
+					<Button onClick={() => { history.push("/developers"); }} className="header-button"><b>Developers</b></Button>
 				</div>
 				<Button color="inherit" onClick={handleLogout} className="header-logout"><b>Logout</b></Button>
 			</Toolbar>

@@ -44,7 +44,7 @@ const AdminHome = () => {
 	}, []);
 
 	return (
-		<div className="AdminHome">
+		<div className="AdminHome Page">
 			{dataLoaded && !error && <CharityTable charities={charities} regions={regions} onRefresh={fetchAllData} />}
 		</div>
 	);
