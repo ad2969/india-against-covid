@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
-function about() {
-    return (
-        <div>
+function about () {
+	return (
+		<div>
             about!
-        </div>
-    )
+		</div>
+	);
 }
 
-export default about
+export default about;

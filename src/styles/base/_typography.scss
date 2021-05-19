@@ -1,0 +1,23 @@
+// interactivity
+.t--unselectable {
+    user-select: none;
+}
+
+// simple styling
+.t--bold {
+    font-weight: bold;
+}
+.t--italic {
+    font-style: italic;
+}
+
+// cases
+.t--capitalize {
+    text-transform: capitalize;
+}
+.t--uppercase {
+    text-transform: uppercase;
+}
+.t--lowercase {
+    text-transform: lowercase;
+}

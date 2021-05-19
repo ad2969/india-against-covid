@@ -1,0 +1,25 @@
+// buttons
+.button {
+    cursor: pointer;
+}
+
+// button animations
+.button--scale {
+    transition: all 0.2s;
+    &:hover {
+        transform: scale(1.1);
+    }
+    &:active {
+        transform: scale(1.1);
+    }
+}
+.button--darken {
+    transition: all 0.3s ease;
+    &:hover {
+        filter: brightness(85%);
+    }
+    &:active {
+        filter: brightness(85%);
+    } 
+
+}
