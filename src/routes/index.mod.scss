@@ -1,15 +1,19 @@
 .NotFound, .Forbidden {
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     position: relative;
     background-color: $white;
-    align-items: center;
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: center;
+    @include flex-center;
     
     button {
         margin-top: 1em;
+        &.MuiButton-contained {
+            background-color: $error;
+            color: $black;
+        }
+        &.MuiButton-containedPrimary {
+            background-color: $confirm;
+        }
     }
 }
