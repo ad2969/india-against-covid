@@ -1,0 +1,31 @@
+.admin-header {
+    flex-grow: 1;
+    width: 100%;
+
+    .admin-header-toolbar {
+        min-height: unset;
+        height: 2.5em;
+    }
+
+    .header-title {
+        flex-grow: 1;
+    }
+    .header-title > .header-text {
+        user-select: none;
+        color: white;
+        font-weight: bold;
+    }
+    .header-title > .header-button {
+        border: 1px solid white;
+        border-radius: 1em;
+        color: white;
+        font-size: 0.5em;
+        margin-left: 2em;
+        padding: 0.5em;
+    }
+
+    .header-button {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
