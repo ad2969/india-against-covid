@@ -1,35 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import {
-	AppBar,
-	Button,
-	Toolbar,
-	Typography
-} from "@material-ui/core";
 import CharityTable from "./Table";
 import "./index.css";
 
 import { fetchRegions, fetchCharities, fetchAllRegionsCharities } from "../../services/api";
-import { logout } from "../../services/auth";
 
 const AdminHome = () => {
-	const history = useHistory();
-
 	const [regions, setRegions] = useState({});
 	const [charities, setCharities] = useState({});
 
 	const [error, setError] = useState(false);
 	const [dataLoaded, setDataLoaded] = useState(false);
-
-	const handleLogout = async () => {
-		try {
-			await logout();
-			history.push("/admin");
-		} catch (err) {
-			console.log("ERR", err);
-			setError(err);
-		}
-	};
 
 	const fetchAllData = async () => {
 		try {
@@ -65,12 +45,6 @@ const AdminHome = () => {
 
 	return (
 		<div className="AdminHome">
-			<AppBar position="static" className="appbar">
-				<Toolbar>
-					<Typography variant="h6" className="appbar-title">Admin Home</Typography>
-					<Button color="inherit" onClick={handleLogout}><b>Logout</b></Button>
-				</Toolbar>
-			</AppBar>
 			{dataLoaded && !error && <CharityTable charities={charities} regions={regions} onRefresh={fetchAllData} />}
 		</div>
 	);

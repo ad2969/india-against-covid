@@ -17,8 +17,3 @@ export const logout = async () => {
 		throw new Error(`FIREBASE ${err.code} ERROR: ${err.message}`);
 	}
 };
-
-export const isAuthenticated = () => {
-	const currentUser = auth.currentUser;
-	return !!currentUser;
-};
