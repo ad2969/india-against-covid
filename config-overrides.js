@@ -7,7 +7,7 @@ module.exports = (config) => {
 	config.module.rules.push({
 		// include all files except those located in folder `styles/*`
 		// test: /^((?!styles\/).)*\.scss$/,
-		test: /\.module\.scss$/,
+		test: /\.mod\.scss$/,
 		use: [
 			{
 				loader: "sass-loader",
