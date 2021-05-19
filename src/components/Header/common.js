@@ -5,6 +5,8 @@ import { Menu as MenuIcon } from "@material-ui/icons";
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 import "./common.mod.scss";
 
+import { scrollToTop } from "../../utils";
+
 const Header = ({ SCROLL_THRESHOLD = 400, logoRedirect = true }) => {
 	const history = useHistory();
 
@@ -31,10 +33,7 @@ const Header = ({ SCROLL_THRESHOLD = 400, logoRedirect = true }) => {
 
 	const handleLogoClick = () => {
 		if (logoRedirect) history.push("/home");
-		else {
-			document.body.scrollTop = 0; // safari
-			document.documentElement.scrollTop = 0; // chrome, etc
-		}
+		else scrollToTop();
 	};
 
 	return (

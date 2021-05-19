@@ -8,6 +8,6 @@ const Landing = () => {
 			<div style={{ background: "black", height: "400px", width: "100%" }}></div>
 		</div>
 	);
-}
+};
 
 export default Landing;

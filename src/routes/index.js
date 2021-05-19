@@ -9,6 +9,7 @@ import Landing from "./Landing";
 import Map from "./Map";
 import About from "./About";
 import Contact from "./Contact";
+import Developers from "./Developers";
 import AdminHome from "./Admin";
 import AdminLogin from "./Admin/login";
 
@@ -38,6 +39,7 @@ function Routes () {
 				<Route exact path="/home" component={Map} />
 				<Route exact path="/about" component={About} />
 				<Route exact path="/contact" component={Contact} />
+				<Route exact path="/developers" component={Developers} />
 				<Route exact path="/" component={Landing} />
 				<Route path="*" component={NotFound} />
 			</Switch>
