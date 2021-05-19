@@ -6,7 +6,7 @@ import AdminHeader from "../components/Header/admin";
 // import pages
 import NotFound from "./NotFound";
 import Landing from "./Landing";
-import Home from "./Home";
+import Map from "./Map";
 import AdminHome from "./Admin";
 import AdminLogin from "./Admin/login";
 
@@ -33,7 +33,7 @@ function Routes () {
 
 				{/* PUBLIC ROUTES */}
 				<Route exact path="/admin" component={AdminLogin} redirect />
-				<Route exact path="/home" component={Home} />
+				<Route exact path="/home" component={Map} />
 				<Route exact path="/" component={Landing} />
 				<Route path="*" component={NotFound} />
 			</Switch>
