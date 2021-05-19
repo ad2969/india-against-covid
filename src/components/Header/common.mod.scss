@@ -1,0 +1,83 @@
+.common-header, .common-header-dark {
+    background: transparent !important;
+    padding-bottom: 1em;
+    box-shadow: unset !important;
+    display: flex !important;
+    flex-direction: row !important;
+    top: 0;
+    @include flex-center;
+    width: 100% !important;
+    position: absolute !important;
+
+    color: $white;
+    transition: all cubic-bezier(0.4, 0, 0.2, 1) 0.2s !important;
+
+    .header-logo {
+        align-items: center;
+        display: flex;
+        font-weight: bold;
+        flex-grow: 1;
+        padding: 1em 1.5em;
+        text-align: left;
+        z-index: 999;
+        
+        color: inherit;
+
+        @include for-phone-landscape-up {
+            padding: 1.5em 2em;
+        }
+
+        svg {
+            font-size: 2.5em;
+            path {
+                fill: $white;
+                transition: fill 0.2s;
+            }
+            
+            @include for-phone-landscape-up {
+                font-size: 3.5em;
+            }
+        }
+    }
+}
+.common-header-dark {
+    color: $black;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    transform: translateY(-100%);
+
+    &.active {
+        transform: translateY(0);
+    }
+    
+    svg {
+        path {
+            fill: $black !important;
+        }
+    }
+}
+
+.header-dropdown, .header-dropdown-dark {
+    padding: 0 2em;
+    color: $white;
+    transition: color 0.2s;
+
+    .MuiPaper-root {
+        background-color: $mono2;
+        color: inherit;
+    
+        li {
+            text-align: right;
+            padding-left: 3em;
+            padding-right: 1em;
+        }
+    }
+}
+.header-dropdown-dark {
+    color: $black;
+
+    .MuiPaper-root {
+        background-color: $white;
+    }
+}

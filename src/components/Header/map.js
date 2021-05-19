@@ -69,6 +69,7 @@ const MapHeader = ({ reloadPage }) => {
 						open={Boolean(narrowDropdownAnchor)}
 						onClose={handleCloseNarrowDropdown}
 					>
+						<MenuItem onClick={() => { history.push("/home"); }}>Map</MenuItem>
 						<MenuItem onClick={() => { history.push("/about"); }}>About</MenuItem>
 						<MenuItem onClick={() => { history.push("/contact"); }}>Contact</MenuItem>
 					</Menu>
