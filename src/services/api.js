@@ -1,4 +1,4 @@
-import { db } from "./firebase";
+import { db, storage } from "./firebase";
 
 export const fetchRegions = async () => {
 	try {
@@ -144,6 +144,18 @@ export const editCharity = async (charityKey, params) => {
 		const charityRef = db.ref(`/charities/${charityKey}`);
 		const response = await charityRef.update(params);
 		return response;
+	} catch (err) {
+		console.error(err);
+		throw new Error("Error with firebase database");
+	}
+};
+
+export const uploadCharityLogo = async (imgName, file) => {
+	try {
+		const imagesRef = storage.ref(`images/${Date.now()}-${imgName}`);
+		const response = await imagesRef.put(file);
+		const imageUrl = await response.ref.getDownloadURL();
+		return imageUrl;
 	} catch (err) {
 		console.error(err);
 		throw new Error("Error with firebase database");
