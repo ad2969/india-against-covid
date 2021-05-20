@@ -40,7 +40,7 @@ const MapHeader = ({ reloadPage }) => {
 	};
 
 	return (
-		<AppBar position="static" className="map-header">
+		<AppBar position="absolute" style={{ left: 0 }} className="map-header">
 			<div className="header-logo">
 				<Logo className="button button--scale" onClick={reloadPage} />
 			</div>
