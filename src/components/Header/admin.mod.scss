@@ -1,6 +1,7 @@
 .admin-header {
     flex-grow: 1;
     width: 100%;
+    z-index: 999;
 
     .admin-header-toolbar {
         min-height: unset;

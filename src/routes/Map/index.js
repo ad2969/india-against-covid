@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import MapHeader from "../../components/Header/map";
+import LeafletMap from "./Leaflet";
 
 import { fetchRegions, fetchRegionCharities } from "../../services/api";
 
@@ -63,9 +64,9 @@ const Map = () => {
 	}, [history]);
 
 	return (
-		<div className="Page">
+		<div className="Page" style={{ height: "100vh" }}>
 			<MapHeader reloadPage={refreshPage} />
-			<div>Map will be displayed here</div>
+			<LeafletMap />
 			<br/>
 			{selectedRegion
 				? <React.Fragment>
