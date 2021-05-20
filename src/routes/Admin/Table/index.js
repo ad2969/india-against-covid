@@ -66,6 +66,9 @@ const CharityTable = (props) => {
 	const [selected, setSelected] = useState([]);
 	const [confirmDeleteSelectedDialog, setConfirmDeleteSelectedDialog] = useState(false);
 
+	const [confirmAddRegionDialog, setConfirmAddRegionDialog] = useState(false);
+	const [confirmAddRegionCharityKey, setConfirmAddRegionCharityKey] = useState(null);
+	const [addRegionCharity, setAddRegionCharity] = useState([]);
 	const [confirmDeleteRegionDialog, setConfirmDeleteRegionDialog] = useState(false);
 	const [confirmDeleteRegionCharityKey, setConfirmDeleteRegionCharityKey] = useState(null);
 	const [confirmDeleteRegionRegionKey, setConfirmDeleteRegionRegionKey] = useState(null);
@@ -155,6 +158,27 @@ const CharityTable = (props) => {
 		setConfirmDeleteSelectedDialog(false);
 	};
 
+	// ADD REGION
+	const handleAddRegion = (charityKey) => {
+		setConfirmAddRegionDialog(true);
+		setConfirmAddRegionCharityKey(charityKey);
+	};
+	const handleAddRegionCharity = (e) => {
+		const inputRegions = e.target.value;
+		setAddRegionCharity(inputRegions);
+	};
+	const handleAddRegionConfirm = async () => {
+		// add charity information
+		await addRegionsToCharity(confirmAddRegionCharityKey, charities[confirmAddRegionCharityKey].name, addRegionCharity);
+		// refresh the page
+		setConfirmAddRegionDialog(false);
+		setConfirmAddRegionCharityKey(null);
+		await onRefresh();
+	};
+	const handleAddRegionCancel = () => {
+		setConfirmAddRegionDialog(false);
+	};
+
 	// DELETE REGION
 	const handleDeleteRegion = (charityKey, regionKey) => {
 		setConfirmDeleteRegionDialog(true);
@@ -235,6 +259,7 @@ const CharityTable = (props) => {
 										{charityInfo.regions.map((region) => <Tooltip title={region.name} key={region.key}>
 											<Chip label={region.key} onDelete={() => handleDeleteRegion(charityKey, region.key)} color="primary" />
 										</Tooltip>)}
+										<Chip label="+" onClick={() => handleAddRegion(charityKey)} color="secondary" />
 									</TableCell>
 									<TableCell align="right">{charityInfo.image_url}</TableCell>
 									<TableCell align="right"><a href={charityInfo.redirect_url}>{charityInfo.redirect_url}</a></TableCell>
@@ -281,6 +306,30 @@ const CharityTable = (props) => {
 				<DialogActions>
 					<Button autoFocus onClick={handleDeleteCharitiesCancel} color="primary">Cancel</Button>
 					<Button onClick={handleDeleteCharitiesConfirm} variant="contained" color="primary">Ok</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Add Region To Charity */}
+			<Dialog
+				disableBackdropClick
+				disableEscapeKeyDown
+				maxWidth="xs"
+				aria-labelledby="confirmation-dialog-title"
+				open={confirmAddRegionDialog}
+			>
+				<DialogTitle id="confirmation-dialog-title">
+                    Adding Regions to &quot;{charities[confirmAddRegionCharityKey] && charities[confirmAddRegionCharityKey].name}&quot;
+				</DialogTitle>
+				<DialogContent>
+					<InputLabel style={{ marginTop: "1em" }}>Regions</InputLabel>
+					<Select margin="dense" id="regions" label="Regions" multiple fullWidth required
+						value={addRegionCharity} onChange={handleAddRegionCharity} >
+						{regionsList.map((region) => <MenuItem value={region[0]} key={region[0]}>{region[1].name}</MenuItem>)}
+					</Select>
+				</DialogContent>
+				<DialogActions>
+					<Button autoFocus onClick={handleAddRegionCancel} color="primary">Cancel</Button>
+					<Button onClick={handleAddRegionConfirm} variant="contained" color="primary">Ok</Button>
 				</DialogActions>
 			</Dialog>
 
