@@ -31,6 +31,7 @@ import {
 	Edit as EditIcon,
 	Refresh as RefreshIcon
 } from "@material-ui/icons";
+import CharityLogo from "../../../components/Images/charityLogo";
 import "./index.css";
 
 import {
@@ -38,7 +39,8 @@ import {
 	addRegionsToCharity,
 	deleteCharities,
 	deleteRegionFromCharity,
-	editCharity
+	editCharity,
+	uploadCharityLogo
 } from "../../../services/api";
 
 // sorting
@@ -144,6 +146,11 @@ const CharityTable = (props) => {
 		const inputRegions = e.target.value;
 		setAddCharityRegions(inputRegions);
 	};
+	const handleAddCharityImage = async (file) => {
+		// const fileType = file.type.split("image/")[1];
+		const responseUrl = await uploadCharityLogo(file.name, file);
+		setAddCharityImageUrl(responseUrl);
+	};
 
 	// EDIT CHARITY
 	const handleEditCharity = () => {
@@ -178,6 +185,10 @@ const CharityTable = (props) => {
 		setEditCharityDescription("");
 		setEditCharityImageUrl("");
 		setEditCharityRedirectUrl("");
+	};
+	const handleEditCharityImage = async (file) => {
+		const responseUrl = await uploadCharityLogo(file.name, file);
+		setEditCharityImageUrl(responseUrl);
 	};
 
 	// DELETE CHARITIES
@@ -302,7 +313,9 @@ const CharityTable = (props) => {
 										</Tooltip>)}
 										<Chip label="+" onClick={() => handleAddRegion(charityKey)} color="secondary" />
 									</TableCell>
-									<TableCell align="right">{charityInfo.image_url}</TableCell>
+									<TableCell align="right">
+										{charityInfo.image_url ? <CharityLogo url={charityInfo.image_url} info={charityInfo} /> : null}
+									</TableCell>
 									<TableCell align="right"><a href={charityInfo.redirect_url}>{charityInfo.redirect_url}</a></TableCell>
 								</TableRow>
 							);
@@ -324,8 +337,11 @@ const CharityTable = (props) => {
 						value={addCharityRegions} onChange={handleAddCharityRegions} >
 						{regionsList.map((region) => <MenuItem value={region[0]} key={region[0]}>{region[1].name}</MenuItem>)}
 					</Select>
-					<TextField margin="dense" id="image_url" label="Image" fullWidth
-						value={addCharityImageUrl} onChange={(e) => setAddCharityImageUrl(e.target.value)} />
+					<InputLabel style={{ marginTop: "1em" }}>Upload Charity Logo</InputLabel><br/>
+					<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+						{addCharityImageUrl && <CharityLogo url={addCharityImageUrl} info={addCharityName} size="lg" />}
+						<input input type="file" label="Image" accept="image/*" onChange={(e) => handleAddCharityImage(e.target.files[0])} />
+					</div>
 					<TextField margin="dense" id="redirect_url" label="Website" fullWidth required
 						value={addCharityRedirectUrl} onChange={(e) => setAddCharityRedirectUrl(e.target.value)} />
 				</DialogContent>
@@ -337,20 +353,23 @@ const CharityTable = (props) => {
 
 			{/* Edit Charity */}
 			<Dialog open={editCharityDialog} aria-labelledby="form-dialog-title">
-				<DialogTitle id="form-dialog-title">Edit Charity &quot;{charities[selected[0]] && charities[selected[0]].name}&quot</DialogTitle>
+				<DialogTitle id="form-dialog-title">Edit Charity &quot;{charities[selected[0]] && charities[selected[0]].name}&quot;</DialogTitle>
 				<DialogContent>
 					<TextField autoFocus margin="dense" id="name" label="Name" fullWidth required
 						value={editCharityName} onChange={(e) => setEditCharityName(e.target.value)} />
 					<TextField margin="dense" id="description" label="Description" fullWidth required
 						value={editCharityDescription} onChange={(e) => setEditCharityDescription(e.target.value)} />
-					<TextField margin="dense" id="image_url" label="Image" fullWidth
-						value={editCharityImageUrl} onChange={(e) => setEditCharityImageUrl(e.target.value)} />
+					<InputLabel style={{ marginTop: "1em" }}>Upload Charity Logo</InputLabel><br/>
+					<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+						{editCharityImageUrl && <CharityLogo url={editCharityImageUrl} info={editCharityName} size="lg" />}
+						<input input type="file" label="Image" accept="image/*" onChange={(e) => handleEditCharityImage(e.target.files[0])} />
+					</div>
 					<TextField margin="dense" id="redirect_url" label="Website" fullWidth required
 						value={editCharityRedirectUrl} onChange={(e) => setEditCharityRedirectUrl(e.target.value)} />
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleEditCharityCancel} color="primary">Cancel</Button>
-					<Button onClick={handleEditCharityConfirm} color="primary">Add</Button>
+					<Button onClick={handleEditCharityConfirm} color="primary">Update</Button>
 				</DialogActions>
 			</Dialog>
 
