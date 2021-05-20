@@ -7,7 +7,12 @@
     background: #ffebf2;
 }
 
-.toolbar-button {
+.charity-table-container > .toolbar > .toolbar-button,
+.charity-table-container > .toolbar-highlight > .toolbar-button {
     margin-left: 1em;
     cursor: pointer;
+}
+.charity-table-container > .toolbar > .toolbar-button ~.toolbar-button,
+.charity-table-container > .toolbar-highlight > .toolbar-button ~.toolbar-button {
+    margin-left: 0;
 }

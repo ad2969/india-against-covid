@@ -138,3 +138,14 @@ export const deleteRegionFromCharity = async (charityKey, regionKey) => {
 		throw new Error("Error with firebase database");
 	}
 };
+
+export const editCharity = async (charityKey, params) => {
+	try {
+		const charityRef = db.ref(`/charities/${charityKey}`);
+		const response = await charityRef.update(params);
+		return response;
+	} catch (err) {
+		console.error(err);
+		throw new Error("Error with firebase database");
+	}
+};
