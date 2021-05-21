@@ -36,6 +36,7 @@ const Map = () => {
 					setCharities(charitiesInRegion);
 				}
 			} else {
+				setSelectedRegionKey(null);
 				console.log("no region selected");
 			}
 
@@ -71,17 +72,18 @@ const Map = () => {
 
 		// fetch all required data
 		fetchAllData(regionQuery);
-	}, [history]);
+	}, [history, history.location.search]);
 
 	return (
 		<div className="Page" style={{ height: "100vh" }}>
 			<MapHeader reloadPage={refreshPage} />
-			<LeafletMap
+			{dataLoaded && <LeafletMap
+				loaded={mapLoaded}
 				setLoaded={setMapLoaded}
 				data={IndiaGeoJson}
 				selectedRegionKey={selectedRegionKey}
 				handleSelectMapRegion={handleSelectMapRegion}
-			/>
+			/>}
 			<br/>
 			<div className="map-sidebar">
 				{selectedRegionKey && regions[selectedRegionKey]

@@ -26,13 +26,20 @@ const COLOR_PALETTE = {
 	lineHighlight: "#666"
 };
 
+const DEFAULT_STYLES = {
+	color: COLOR_PALETTE.line,
+	fillColor: COLOR_PALETTE.default,
+	fillOpacity: 0.3
+};
 const LOCK_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
+	fillColor: COLOR_PALETTE.default,
 	fillOpacity: 0.7,
 	weight: 5
 };
 const HIGHLIGHT_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
+	fillColor: COLOR_PALETTE.default,
 	fillOpacity: 0.7
 };
 
@@ -41,6 +48,7 @@ const DEFAULT_BOUNDS = [[40, 65], [5, 100]];
 
 const LeafletMap = (props) => {
 	const {
+		loaded,
 		setLoaded,
 		data,
 		selectedRegionKey,
@@ -49,11 +57,9 @@ const LeafletMap = (props) => {
 
 	const mapRef = useRef();
 	const geoJsonRef = useRef();
+	const initialLayerRef = useRef();
 	const [selectedLayer, setSelectedLayer] = useState(null);
-
-	useEffect(() => {
-		console.log({ selectedRegionKey });
-	}, []);
+	const [clickedLayer, setClickedLayer] = useState(null);
 
 	const zoomToRegion = (bounds) => {
 		mapRef.current.flyToBounds(bounds);
@@ -73,33 +79,39 @@ const LeafletMap = (props) => {
 		if (selectedLayer && layer.feature.properties.code === selectedLayer.feature.properties.code) return;
 
 		// reset the layer styles
-		geoJsonRef.current.resetStyle(layer);
+		layer.setStyle(DEFAULT_STYLES);
 		layer.bringToBack();
 	};
 
 	const handleClickRegion = (e) => {
-		const bounds = e.sourceTarget.getBounds();
 		const layer = e.sourceTarget;
-
-		// reset other layer styles, if any
-		if (selectedLayer) geoJsonRef.current.resetStyle(selectedLayer);
-
-		if (selectedLayer && layer.feature.properties.code === selectedLayer.feature.properties.code) {
-			setSelectedLayer(null);
-			geoJsonRef.current.resetStyle(layer);
-			zoomToRegion(DEFAULT_BOUNDS);
-			handleSelectMapRegion(null);
-			return;
-		}
-
-		// highlight this layer
-		setSelectedLayer(layer);
-		layer.setStyle(LOCK_STYLES);
-
-		// zoom to region
-		zoomToRegion(bounds);
-		handleSelectMapRegion(layer.feature.properties.code);
+		setClickedLayer(e.sourceTarget);
+		// change the url query
+		if (selectedLayer && layer.feature.properties.code === selectedLayer.feature.properties.code) handleSelectMapRegion(null);
+		else handleSelectMapRegion(layer.feature.properties.code);
 	};
+
+	useEffect(() => {
+		if (!loaded) return;
+		// reset previous layer styles, if any
+		if (selectedLayer) selectedLayer.setStyle(DEFAULT_STYLES);
+		if (selectedRegionKey) {
+			let layer = clickedLayer || initialLayerRef.current
+			// get info about the layer
+			const bounds = layer.getBounds();
+			// apply new styles and zoom
+			layer.setStyle(LOCK_STYLES);
+			zoomToRegion(bounds);
+			// save the new layer
+			setSelectedLayer(layer);
+		} else {
+			// zoom to default view
+			zoomToRegion(DEFAULT_BOUNDS);
+			// empty layer saves
+			setSelectedLayer(null);
+		}
+		setClickedLayer(null);
+	}, [loaded, selectedRegionKey]);
 
 	return (
 		<MapContainer
@@ -119,7 +131,7 @@ const LeafletMap = (props) => {
 				url={`https://api.mapbox.com/styles/v1/${MAPBOX_USER}/${MAPBOX_STYLE_ID}/tiles/256/{z}/{x}/{y}?access_token=${MAPBOX_TOKEN}`}
 				attribution="Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>"
 			/>
-			<GeoJSON
+			{loaded && <GeoJSON
 				ref={geoJsonRef}
 				data={data}
 				attribution="&copy; credits due..."
@@ -128,11 +140,18 @@ const LeafletMap = (props) => {
 					mouseout: handleMouseoutRegion,
 					click: handleClickRegion
 				}}
-				style={{
-					fillColor: COLOR_PALETTE.default,
-					color: COLOR_PALETTE.line
+				onEachFeature={(feature, layer) => {
+					console.log(feature.properties.code);
+					if (layer && selectedRegionKey && feature.properties.code === selectedRegionKey) {
+						// if a region was given at the start, set unique styles for the corresponding layer
+						console.log("DICK", layer);
+						initialLayerRef.current = layer; // hacky af but this works
+					} else {
+						// otherwise, set the default layer styles for every layer
+						layer.setStyle(DEFAULT_STYLES);
+					}
 				}}
-			/>
+			/>}
 		</MapContainer>
 	);
 };
