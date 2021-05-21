@@ -54,7 +54,7 @@
         z-index: 998;
 
         &.wide-active {
-            background-color: $mono2;
+            background-color: $secondary;
             transform: translateX(-10%);
         }
 
@@ -79,7 +79,7 @@
     padding: 0 2em;
 
     .MuiPaper-root {
-        background-color: $mono2;
+        background-color: $secondary;
         color: $white;
     
         li {

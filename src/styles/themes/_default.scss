@@ -1,12 +1,11 @@
 // default colors
 $primary: #2B2B2B;      // dominant color
-$secondary: #FFF;    // secondary color
+$secondary: #575151;    // secondary color
 $accent: #FEB062;       // accent (highlights), can have multiple
 
-$error: #fff;          // error color
+$error: #fff;           // error color
 $confirm: $accent;        // approval color
 
 $black: #000;           // black
-$mono1: #131313;        // darker monochrome
-$mono2: #575151;        // lighter monochrome
+$mono: #F5F5F5;
 $white: #FFF;           // white
