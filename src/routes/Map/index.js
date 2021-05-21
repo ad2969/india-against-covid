@@ -2,18 +2,23 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import MapHeader from "../../components/Header/map";
 import LeafletMap from "./Leaflet";
+import "./index.mod.scss";
 
 import { fetchRegions, fetchRegionCharities } from "../../services/api";
+import IndiaGeoJson from "../../assets/india.simplified.json";
+// Original data obtained from: https://github.com/markmarkoh/datamaps
+// Simplified using: https://mapshaper.org/
 
 const Map = () => {
 	const history = useHistory();
 
 	const [regions, setRegions] = useState({});
 	const [charities, setCharities] = useState({});
-	const [selectedRegion, setSelectedRegion] = useState(null);
+	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
 
 	const [error, setError] = useState(false);
 	const [dataLoaded, setDataLoaded] = useState(false);
+	const [mapLoaded, setMapLoaded] = useState(false);
 
 	const fetchAllData = async (regionKey = null) => {
 		try {
@@ -23,7 +28,7 @@ const Map = () => {
 			if (regionKey) {
 				console.log(`searching for region "${regionKey}"`);
 				const regionInfo = regionsResponse[regionKey];
-				setSelectedRegion(regionInfo);
+				setSelectedRegionKey(regionKey);
 				console.log(`- "${regionInfo.name}" found!`);
 
 				if (regionInfo) {
@@ -54,6 +59,11 @@ const Map = () => {
 		}
 	};
 
+	const handleSelectMapRegion = (regionKey = null) => {
+		if (regionKey) history.push({ search: `?region=${regionKey}` });
+		else history.push({ search: null });
+	};
+
 	useEffect(() => {
 		// get search query, if any
 		const urlParams = new URLSearchParams(history.location.search);
@@ -66,18 +76,25 @@ const Map = () => {
 	return (
 		<div className="Page" style={{ height: "100vh" }}>
 			<MapHeader reloadPage={refreshPage} />
-			<LeafletMap />
+			<LeafletMap
+				setLoaded={setMapLoaded}
+				data={IndiaGeoJson}
+				selectedRegionKey={selectedRegionKey}
+				handleSelectMapRegion={handleSelectMapRegion}
+			/>
 			<br/>
-			{selectedRegion
-				? <React.Fragment>
-					<h3>Searching for region &quot;{selectedRegion.name}&quot;</h3>
-					<div>Charity Data for Given Region: {JSON.stringify(charities)}</div>
-				</React.Fragment>
-				: <div>Region Data: {JSON.stringify(regions)}</div>}
-			<br/>
+			<div className="map-sidebar">
+				{selectedRegionKey && regions[selectedRegionKey]
+					? <React.Fragment>
+						<h3>Searching for region &quot;{regions[selectedRegionKey].name}&quot;</h3>
+						<div>Charity Data for Given Region: {JSON.stringify(charities)}</div>
+					</React.Fragment>
+					: <div>Region Data: {JSON.stringify(regions)}</div>}
+				<br/>
 
-			<div>Data loaded? {dataLoaded ? "yes" : "no"}</div>
-			<div>Error found? {error ? "yes" : "no"}</div>
+				<div>Data loaded? {dataLoaded ? "yes" : "no"}</div>
+				<div>Error found? {error ? "yes" : "no"}</div>
+			</div>
 		</div>
 	);
 };
