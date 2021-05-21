@@ -29,7 +29,8 @@ const COLOR_PALETTE = {
 const DEFAULT_STYLES = {
 	color: COLOR_PALETTE.line,
 	fillColor: COLOR_PALETTE.default,
-	fillOpacity: 0.3
+	fillOpacity: 0.3,
+	weight: 3
 };
 const LOCK_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
@@ -40,7 +41,8 @@ const LOCK_STYLES = {
 const HIGHLIGHT_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
 	fillColor: COLOR_PALETTE.default,
-	fillOpacity: 0.7
+	fillOpacity: 0.7,
+	weight: 3
 };
 
 const DEFAULT_CENTER = [20.5, 80];
@@ -52,7 +54,8 @@ const LeafletMap = (props) => {
 		setLoaded,
 		data,
 		selectedRegionKey,
-		handleSelectMapRegion
+		handleSelectMapRegion,
+		sidebarOpen
 	} = props;
 
 	const mapRef = useRef();
@@ -89,7 +92,7 @@ const LeafletMap = (props) => {
 	};
 
 	useEffect(() => {
-		if (!loaded || !geoJsonRef) return;
+		if (!loaded || !geoJsonRef.current || !mapRef.current) return;
 		// reset previous layer styles, if any
 		if (selectedLayer) selectedLayer.setStyle(DEFAULT_STYLES);
 		if (selectedRegionKey) {
@@ -112,40 +115,43 @@ const LeafletMap = (props) => {
 	}, [loaded, selectedRegionKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
-		<MapContainer
-			className="LeafletMap"
-			center={DEFAULT_CENTER}
-			maxBounds={DEFAULT_BOUNDS}
-			minZoom={5}
-			zoom={6}
-			preferCanvas={true}
-			scrollWheelZoom={true}
-			whenCreated={(mapInstance) => {
-				mapRef.current = mapInstance;
-				setLoaded(true);
-			}}
-		>
-			<TileLayer
-				url={`https://api.mapbox.com/styles/v1/${MAPBOX_USER}/${MAPBOX_STYLE_ID}/tiles/256/{z}/{x}/{y}?access_token=${MAPBOX_TOKEN}`}
-				attribution="Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>"
-			/>
-			{loaded && <GeoJSON
-				ref={geoJsonRef}
-				data={data}
-				attribution="&copy; credits due..."
-				eventHandlers={{
-					mouseover: handleMouseoverRegion,
-					mouseout: handleMouseoutRegion,
-					click: handleClickRegion
+		<div className={`leaflet-map-container ${sidebarOpen && "sidebar-open"}`}>
+			<MapContainer
+				className="LeafletMap"
+				center={DEFAULT_CENTER}
+				maxBounds={DEFAULT_BOUNDS}
+				minZoom={5}
+				zoom={6}
+				preferCanvas={true}
+				scrollWheelZoom={true}
+				whenCreated={(mapInstance) => {
+					mapRef.current = mapInstance;
+					setLoaded(true);
 				}}
-				onEachFeature={(feature, layer) => {
+			>
+				<TileLayer
+					url={`https://api.mapbox.com/styles/v1/${MAPBOX_USER}/${MAPBOX_STYLE_ID}/tiles/256/{z}/{x}/{y}?access_token=${MAPBOX_TOKEN}`}
+					attribution="Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>"
+				/>
+				{loaded && <GeoJSON
+					ref={geoJsonRef}
+					data={data}
+					attribution="&copy; credits due..."
+					eventHandlers={{
+						mouseover: handleMouseoverRegion,
+						mouseout: handleMouseoutRegion,
+						click: handleClickRegion
+					}}
+					onEachFeature={(feature, layer) => {
 					// set the layer id based on the region id
-					layer._leaflet_id = feature.properties.code;
-					// set default layer styles for every layer
-					layer.setStyle(DEFAULT_STYLES);
-				}}
-			/>}
-		</MapContainer>
+						layer._leaflet_id = feature.properties.code;
+						// set default layer styles for every layer
+						layer.setStyle(DEFAULT_STYLES);
+					}}
+				/>}
+			</MapContainer>
+
+		</div>
 	);
 };
 
