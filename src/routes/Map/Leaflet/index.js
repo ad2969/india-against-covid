@@ -57,9 +57,7 @@ const LeafletMap = (props) => {
 
 	const mapRef = useRef();
 	const geoJsonRef = useRef();
-	const initialLayerRef = useRef();
 	const [selectedLayer, setSelectedLayer] = useState(null);
-	const [clickedLayer, setClickedLayer] = useState(null);
 
 	const zoomToRegion = (bounds) => {
 		mapRef.current.flyToBounds(bounds);
@@ -85,22 +83,23 @@ const LeafletMap = (props) => {
 
 	const handleClickRegion = (e) => {
 		const layer = e.sourceTarget;
-		setClickedLayer(e.sourceTarget);
 		// change the url query
 		if (selectedLayer && layer.feature.properties.code === selectedLayer.feature.properties.code) handleSelectMapRegion(null);
 		else handleSelectMapRegion(layer.feature.properties.code);
 	};
 
 	useEffect(() => {
-		if (!loaded) return;
+		if (!loaded || !geoJsonRef) return;
 		// reset previous layer styles, if any
 		if (selectedLayer) selectedLayer.setStyle(DEFAULT_STYLES);
 		if (selectedRegionKey) {
-			let layer = clickedLayer || initialLayerRef.current
+			// find the corresponding geojson layer
+			const layer = geoJsonRef.current.getLayer(selectedRegionKey);
 			// get info about the layer
 			const bounds = layer.getBounds();
 			// apply new styles and zoom
 			layer.setStyle(LOCK_STYLES);
+			layer.bringToFront();
 			zoomToRegion(bounds);
 			// save the new layer
 			setSelectedLayer(layer);
@@ -110,8 +109,7 @@ const LeafletMap = (props) => {
 			// empty layer saves
 			setSelectedLayer(null);
 		}
-		setClickedLayer(null);
-	}, [loaded, selectedRegionKey]);
+	}, [loaded, selectedRegionKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<MapContainer
@@ -141,15 +139,10 @@ const LeafletMap = (props) => {
 					click: handleClickRegion
 				}}
 				onEachFeature={(feature, layer) => {
-					console.log(feature.properties.code);
-					if (layer && selectedRegionKey && feature.properties.code === selectedRegionKey) {
-						// if a region was given at the start, set unique styles for the corresponding layer
-						console.log("DICK", layer);
-						initialLayerRef.current = layer; // hacky af but this works
-					} else {
-						// otherwise, set the default layer styles for every layer
-						layer.setStyle(DEFAULT_STYLES);
-					}
+					// set the layer id based on the region id
+					layer._leaflet_id = feature.properties.code;
+					// set default layer styles for every layer
+					layer.setStyle(DEFAULT_STYLES);
 				}}
 			/>}
 		</MapContainer>
