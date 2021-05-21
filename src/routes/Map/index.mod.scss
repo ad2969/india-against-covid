@@ -1,0 +1,13 @@
+.map-sidebar {
+    background: $mono;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 100vw;
+    z-index: 1000;
+
+    @include for-phone-landscape-up {
+        width: 30vw;
+    }
+}
