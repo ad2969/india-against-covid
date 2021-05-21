@@ -13,7 +13,7 @@ const Map = () => {
 	const history = useHistory();
 
 	const [regions, setRegions] = useState({});
-	const [charities, setCharities] = useState({});
+	const [regionDataCharities, setRegionDataCharities] = useState(null);
 	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
 
 	const [error, setError] = useState(false);
@@ -33,7 +33,7 @@ const Map = () => {
 
 				if (regionInfo) {
 					const charitiesInRegion = await fetchRegionCharities(regionKey, true);
-					setCharities(charitiesInRegion);
+					setRegionDataCharities(charitiesInRegion);
 				}
 			} else {
 				setSelectedRegionKey(null);
@@ -75,27 +75,29 @@ const Map = () => {
 	}, [history, history.location.search]);
 
 	return (
-		<div className="Page" style={{ height: "100vh" }}>
+		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
-			{dataLoaded && <LeafletMap
-				loaded={mapLoaded}
-				setLoaded={setMapLoaded}
-				data={IndiaGeoJson}
-				selectedRegionKey={selectedRegionKey}
-				handleSelectMapRegion={handleSelectMapRegion}
-			/>}
-			<br/>
-			<div className="map-sidebar">
-				{selectedRegionKey && regions[selectedRegionKey]
-					? <React.Fragment>
-						<h3>Searching for region &quot;{regions[selectedRegionKey].name}&quot;</h3>
-						<div>Charity Data for Given Region: {JSON.stringify(charities)}</div>
-					</React.Fragment>
-					: <div>Region Data: {JSON.stringify(regions)}</div>}
-				<br/>
+			<div className="map-container">
+				{dataLoaded && <LeafletMap
+					loaded={mapLoaded}
+					setLoaded={setMapLoaded}
+					data={IndiaGeoJson}
+					selectedRegionKey={selectedRegionKey}
+					handleSelectMapRegion={handleSelectMapRegion}
+					sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
+				/>}
+				<div className={`map-sidebar ${selectedRegionKey && regionDataCharities && "active"}`}>
+					{selectedRegionKey && regions[selectedRegionKey]
+						? <React.Fragment>
+							<h3>Searching for region &quot;{regions[selectedRegionKey].name}&quot;</h3>
+							<div>Charity Data for Given Region: {JSON.stringify(regionDataCharities)}</div>
+						</React.Fragment>
+						: <div>Region Data: {JSON.stringify(regions)}</div>}
+					<br/>
 
-				<div>Data loaded? {dataLoaded ? "yes" : "no"}</div>
-				<div>Error found? {error ? "yes" : "no"}</div>
+					<div>Data loaded? {dataLoaded ? "yes" : "no"}</div>
+					<div>Error found? {error ? "yes" : "no"}</div>
+				</div>
 			</div>
 		</div>
 	);
