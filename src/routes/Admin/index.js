@@ -13,6 +13,7 @@ const AdminHome = () => {
 
 	const fetchAllData = async () => {
 		try {
+			console.debug("** API GET: FIREBASE ALL DATA");
 			const [regionsResponse, charitiesResponse, regionsCharitiesResponse] = await Promise.all([
 				fetchRegions(), fetchCharities(), fetchAllRegionsCharities()
 			]);
@@ -30,7 +31,6 @@ const AdminHome = () => {
 				}
 				charitiesResponse[charityKey].regions = regions;
 			}
-			console.log("** API GET:", { charitiesResponse });
 			setCharities(charitiesResponse);
 			setDataLoaded(true);
 		} catch (err) {

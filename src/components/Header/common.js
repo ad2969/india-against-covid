@@ -17,7 +17,6 @@ const Header = ({ SCROLL_THRESHOLD = 400, logoRedirect = true }) => {
 		const updateScroll = () => {
 			if (window.scrollY >= SCROLL_THRESHOLD) setPassedScrollThreshold(true);
 			else setPassedScrollThreshold(false);
-			console.log(SCROLL_THRESHOLD, "scrolled", window.scrollY, window.scrollY >= SCROLL_THRESHOLD);
 		};
 		window.addEventListener("scroll", updateScroll);
 		return () => window.removeEventListener("scroll", updateScroll);

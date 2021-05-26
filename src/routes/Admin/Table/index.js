@@ -97,7 +97,6 @@ const CharityTable = (props) => {
 		}
 
 		setSelected(newSelected);
-		console.log("Selected rows:", { newSelected });
 	};
 
 	// ADD CHARITY
