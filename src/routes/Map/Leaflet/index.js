@@ -30,7 +30,7 @@ const DEFAULT_STYLES = {
 	color: COLOR_PALETTE.line,
 	fillColor: COLOR_PALETTE.default,
 	fillOpacity: 0.3,
-	weight: 3
+	weight: 2
 };
 const LOCK_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
@@ -42,7 +42,7 @@ const HIGHLIGHT_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
 	fillColor: COLOR_PALETTE.default,
 	fillOpacity: 0.7,
-	weight: 3
+	weight: 2
 };
 
 const DEFAULT_CENTER = [20.5, 80];
