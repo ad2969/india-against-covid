@@ -4,7 +4,8 @@ import MapHeader from "../../components/Header/map";
 import LeafletMap from "./Leaflet";
 import "./index.mod.scss";
 
-import { fetchRegions, fetchRegionCharities } from "../../services/api";
+import { isEmpty } from "../../utils";
+import { fetchRegions, fetchRegionCharities, fetchCovidDatabase } from "../../services/api";
 import IndiaGeoJson from "../../assets/india.simplified.json";
 // Original data obtained from: https://github.com/markmarkoh/datamaps
 // Simplified using: https://mapshaper.org/
@@ -17,30 +18,36 @@ const Map = () => {
 	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
 
 	const [error, setError] = useState(false);
-	const [dataLoaded, setDataLoaded] = useState(false);
+	const [basicDataLoaded, setBasicDataLoaded] = useState(false);
+	const [regionDataLoaded, setRegionDataLoaded] = useState(false);
 	const [mapLoaded, setMapLoaded] = useState(false);
 
-	const fetchAllData = async (regionKey = null) => {
+	const getRegions = async () => {
 		try {
+			console.debug("** API GET: FIREBASE REGION DATA");
 			const regionsResponse = await fetchRegions();
-			setRegions(regionsResponse);
+			console.debug("** API GET: COVID DATA");
+			const covidDataResponse = await fetchCovidDatabase();
 
-			if (regionKey) {
-				console.log(`searching for region "${regionKey}"`);
-				const regionInfo = regionsResponse[regionKey];
-				setSelectedRegionKey(regionKey);
-				console.log(`- "${regionInfo.name}" found!`);
-
-				if (regionInfo) {
-					const charitiesInRegion = await fetchRegionCharities(regionKey, true);
-					setRegionDataCharities(charitiesInRegion);
-				}
-			} else {
-				setSelectedRegionKey(null);
-				console.log("no region selected");
+			for (const key in regionsResponse) {
+				const data = Object.values(covidDataResponse.regionData).find((region) => region.region === regionsResponse[key].name);
+				regionsResponse[key] = { ...regionsResponse[key], ...data };
 			}
 
-			setDataLoaded(true);
+			setRegions(regionsResponse);
+			setBasicDataLoaded(true);
+		} catch (err) {
+			setError(true);
+			console.error(err);
+		}
+	};
+
+	const getRegionDataCharities = async (regionKey = null) => {
+		try {
+			console.debug("** API GET: FIREBASE CHARITY DATA FOR REGION", regionKey);
+			const charitiesInRegion = await fetchRegionCharities(regionKey, true);
+			setRegionDataCharities(charitiesInRegion);
+			setRegionDataLoaded(true);
 		} catch (err) {
 			setError(true);
 			console.error(err);
@@ -65,20 +72,41 @@ const Map = () => {
 		else history.push({ search: null });
 	};
 
+	// ONLY ON FIRST LOAD AND PAGE QUERY CHANGES
 	useEffect(() => {
+		// do nothing if error exists
+		if (error) return;
+
 		// get search query, if any
 		const urlParams = new URLSearchParams(history.location.search);
 		const regionQuery = urlParams.get("region");
 
+		// if basic data has not been loaded, load that first
+		if (isEmpty(regions)) getRegions();
+		// if a query was given, load that data
+		else if (regionQuery && regions[regionQuery]) setSelectedRegionKey(regionQuery);
+		// if no query was given, but one was already selected, remove that query
+		else if (selectedRegionKey && !regionQuery) setSelectedRegionKey(null);
+	}, [history, history.location.search, basicDataLoaded]); // eslint-disable-line react-hooks/exhaustive-deps
+
+	// ON SELECT REGIONS
+	useEffect(() => {
+		// do nothing if error exists, or if basic data hasn't been loaded
+		if (error || !basicDataLoaded) return;
+		// set to loaded if no region selected
+		if (!selectedRegionKey) {
+			setRegionDataLoaded(true);
+			return;
+		}
 		// fetch all required data
-		fetchAllData(regionQuery);
-	}, [history, history.location.search]);
+		getRegionDataCharities(selectedRegionKey);
+	}, [selectedRegionKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
 			<div className="map-container">
-				{dataLoaded && <LeafletMap
+				{basicDataLoaded && <LeafletMap
 					loaded={mapLoaded}
 					setLoaded={setMapLoaded}
 					data={IndiaGeoJson}
@@ -87,15 +115,20 @@ const Map = () => {
 					sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
 				/>}
 				<div className={`map-sidebar ${selectedRegionKey && regionDataCharities && "active"}`}>
-					{selectedRegionKey && regions[selectedRegionKey]
+					{regionDataLoaded && selectedRegionKey
 						? <React.Fragment>
 							<h3>Searching for region &quot;{regions[selectedRegionKey].name}&quot;</h3>
+							<br /><hr /><br />
+							<div>Active Cases: {regions[selectedRegionKey].activeCases}</div>
+							<div>Recovered: {regions[selectedRegionKey].recovered} (+{regions[selectedRegionKey].newRecovered})</div>
+							<div>Deceased: {regions[selectedRegionKey].deceased} (+{regions[selectedRegionKey].newDeceased})</div>
+							<div>Total Infected: {regions[selectedRegionKey].totalInfected} (+{regions[selectedRegionKey].newInfected})</div>
+							<br /><hr /><br />
 							<div>Charity Data for Given Region: {JSON.stringify(regionDataCharities)}</div>
 						</React.Fragment>
 						: <div>Region Data: {JSON.stringify(regions)}</div>}
-					<br/>
 
-					<div>Data loaded? {dataLoaded ? "yes" : "no"}</div>
+					<div>Data loaded? {basicDataLoaded && regionDataLoaded ? "yes" : "no"}</div>
 					<div>Error found? {error ? "yes" : "no"}</div>
 				</div>
 			</div>
