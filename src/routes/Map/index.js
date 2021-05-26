@@ -57,8 +57,7 @@ const Map = () => {
 	const refreshPage = async () => {
 		try {
 			// refresh region data
-			const regionsResponse = await fetchRegions();
-			setRegions(regionsResponse);
+			await getRegions();
 			// set the query to none
 			history.replace({ region: "" });
 		} catch (err) {
