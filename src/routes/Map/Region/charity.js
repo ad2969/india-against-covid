@@ -23,7 +23,11 @@ const HtmlTooltip = withStyles((theme) => ({
 
 const limitDescription = (description) => {
 	if (description.length > 100) {
-		return <HtmlTooltip title={<div className="charity-description--tooltip">{description}</div>}>
+		return <HtmlTooltip
+			title={<div className="charity-description--tooltip">{description}</div>}
+			PopperProps={{ disablePortal: true }}
+			placement="left"
+		>
 			<div className="charity-description">{description}</div>
 		</HtmlTooltip>;
 	} else return <div className="charity-description">{description}</div>;
