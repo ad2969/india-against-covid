@@ -1,0 +1,129 @@
+.About {
+    // honestly whatever man
+    overflow: hidden;
+}
+
+.about-background {
+    background-image: url("../../assets/about.png");
+    background-repeat: no-repeat;
+    background-size: 150% auto;
+    background-position: 50%;
+    height: 30vh;
+    min-height: 15rem;
+    position: relative;
+    width: 100%;
+
+    @include for-phone-landscape-up {
+        height: 30vh;
+        min-height: 20rem;
+    }
+
+    @include for-laptop-up {
+        height: 40vh;
+        min-height: 25rem;
+    }
+}
+
+.about-head-container {
+    background: rgba(0, 0, 0, 0.4);
+    height: 100%;
+    width: 100%;
+
+    .about-slogan {
+        color: white;
+        font-size: 2rem;
+        font-weight: bold;
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        max-width: 90%;
+        transform: translate(-50%, -30%);
+
+        @include for-laptop-up {
+            text-align: left;
+            font-size: 3rem;
+            bottom: 0;
+            left: 0;
+            top: unset;
+            margin: 0 0 4rem 20%;
+            max-width: 20%;
+            transform: unset;
+        }
+    }
+
+    .about-purpose {
+        display: none;
+
+        @include for-laptop-up {
+            display: unset;
+            background: $accent;
+            position: absolute;
+            bottom: -5rem;
+            right: 0;
+            max-width: 30%;
+            margin-right: 20%;
+            padding: 2.5rem;
+            font-size: 1rem;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+    }
+
+}
+
+.about-body {
+    margin: 0;
+    width: 100%;
+
+    @include for-laptop-up {
+        margin: 0 20%;
+        width: 60%;
+    }
+
+    .about-purpose-mobile {
+        background: $accent;
+        display: block;
+        margin: 2rem auto;
+        padding: 2rem;
+        width: calc(80% - 4rem);
+
+        @include for-laptop-up {
+            visibility: hidden;
+            height: 0;
+            padding: 1rem;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+    }
+
+    .about-team {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+.line-heading {
+    margin: 1rem auto;
+    width: 80%;
+
+    @include for-laptop-up {
+        width: 100%;
+    }
+
+}
+
+h1 {
+    font-size: 1.4rem;
+
+    @include for-laptop-up {
+        font-size: 2rem;
+    }
+}
