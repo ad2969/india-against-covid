@@ -12,15 +12,38 @@
     background: $mono;
     position: absolute;
     right: 0;
-    top: 0;
-    height: 100%;
+    bottom: 0;
+    height: calc(100% - 4rem);
     width: 100vw;
     z-index: 1000;
     transform: translateX(100%);
     transition: transform 0.2s;
+    border-radius: 0;
+    font-size: 0.8em;
+
+    .close-button {
+        display: unset;
+        align-self: center;
+        margin-left: auto;
+
+        @include for-phone-landscape-up {
+            display: none;
+        }
+    }
 
     @include for-phone-landscape-up {
-        transform: translateX(100%);
+        height: 100%;
+        width: 50vw;
+        font-size: 0.9em;
+        border-radius: 2em 0 0 2em;
+    }
+
+    @include for-tablet-landscape-up {
+        font-size: 1em;
+        width: 40vw;
+    }
+
+    @include for-laptop-up {
         width: 30vw;
     }
 
