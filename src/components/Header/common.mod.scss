@@ -81,3 +81,20 @@
         background-color: $white;
     }
 }
+
+
+.header-dropdown.shrink {
+    padding-right: 2em;
+
+    @include for-laptop-up {
+        padding-right: 5%;
+    }
+}
+.header-logo.shrink {
+    padding-left: 2em;
+
+    @include for-laptop-up {
+        padding-left: 5%;
+    }
+    
+}

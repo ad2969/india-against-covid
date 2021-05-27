@@ -7,7 +7,7 @@ import "./common.mod.scss";
 
 import { scrollToTop } from "../../utils";
 
-const Header = ({ SCROLL_THRESHOLD = 400, logoRedirect = true }) => {
+const Header = ({ SCROLL_THRESHOLD = 400, logoRedirect = true, shrink = false }) => {
 	const history = useHistory();
 
 	const [dropdownAnchor, setDropdownAnchor] = useState(null);
@@ -38,10 +38,10 @@ const Header = ({ SCROLL_THRESHOLD = 400, logoRedirect = true }) => {
 	return (
 		<React.Fragment>
 			<AppBar position="static" className="common-header">
-				<div className="header-logo">
+				<div className={`header-logo ${shrink && "shrink"}`}>
 					<Logo className="button button--scale" onClick={handleLogoClick} />
 				</div>
-				<div className="header-dropdown">
+				<div className={`header-dropdown ${shrink && "shrink"}`}>
 					<div
 						className="header-dropdown-button"
 						aria-controls="dropdown"
@@ -64,10 +64,10 @@ const Header = ({ SCROLL_THRESHOLD = 400, logoRedirect = true }) => {
 				</div>
 			</AppBar>
 			<AppBar position="static" className={`common-header-dark ${passedScrollThreshold && "active"}`}>
-				<div className="header-logo">
+				<div className={`header-logo ${shrink && "shrink"}`}>
 					<Logo className="button button--scale" onClick={() => { history.push("/home"); }} />
 				</div>
-				<div className="header-dropdown">
+				<div className={`header-dropdown ${shrink && "shrink"}`}>
 					<div
 						className="header-dropdown-button"
 						aria-controls="dropdown"
