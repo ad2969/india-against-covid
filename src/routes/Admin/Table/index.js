@@ -28,15 +28,19 @@ import {
 import {
 	Add as AddIcon,
 	Delete as DeleteIcon,
+	Edit as EditIcon,
 	Refresh as RefreshIcon
 } from "@material-ui/icons";
+import CharityLogo from "../../../components/Images/charityLogo";
 import "./index.css";
 
 import {
 	addCharity,
 	addRegionsToCharity,
 	deleteCharities,
-	deleteRegionFromCharity
+	deleteRegionFromCharity,
+	editCharity,
+	uploadCharityLogo
 } from "../../../services/api";
 
 // sorting
@@ -63,9 +67,18 @@ const CharityTable = (props) => {
 	const [addCharityImageUrl, setAddCharityImageUrl] = useState("");
 	const [addCharityRedirectUrl, setAddCharityRedirectUrl] = useState("");
 
+	const [editCharityDialog, setEditCharityDialog] = useState(false);
+	const [editCharityName, setEditCharityName] = useState("");
+	const [editCharityDescription, setEditCharityDescription] = useState("");
+	const [editCharityImageUrl, setEditCharityImageUrl] = useState("");
+	const [editCharityRedirectUrl, setEditCharityRedirectUrl] = useState("");
+
 	const [selected, setSelected] = useState([]);
 	const [confirmDeleteSelectedDialog, setConfirmDeleteSelectedDialog] = useState(false);
 
+	const [confirmAddRegionDialog, setConfirmAddRegionDialog] = useState(false);
+	const [confirmAddRegionCharityKey, setConfirmAddRegionCharityKey] = useState(null);
+	const [addRegionCharity, setAddRegionCharity] = useState([]);
 	const [confirmDeleteRegionDialog, setConfirmDeleteRegionDialog] = useState(false);
 	const [confirmDeleteRegionCharityKey, setConfirmDeleteRegionCharityKey] = useState(null);
 	const [confirmDeleteRegionRegionKey, setConfirmDeleteRegionRegionKey] = useState(null);
@@ -97,7 +110,6 @@ const CharityTable = (props) => {
 		}
 
 		setSelected(newSelected);
-		console.log("Selected rows:", { newSelected });
 	};
 
 	// ADD CHARITY
@@ -109,7 +121,6 @@ const CharityTable = (props) => {
 		const response = await addCharity({
 			name: addCharityName,
 			description: addCharityDescription,
-			regions: addCharityRegions,
 			image_url: addCharityImageUrl,
 			redirect_url: addCharityRedirectUrl
 		});
@@ -135,6 +146,50 @@ const CharityTable = (props) => {
 		const inputRegions = e.target.value;
 		setAddCharityRegions(inputRegions);
 	};
+	const handleAddCharityImage = async (file) => {
+		// const fileType = file.type.split("image/")[1];
+		const responseUrl = await uploadCharityLogo(file.name, file);
+		setAddCharityImageUrl(responseUrl);
+	};
+
+	// EDIT CHARITY
+	const handleEditCharity = () => {
+		const charityInfo = charities[selected[0]];
+		setEditCharityName(charityInfo.name);
+		setEditCharityDescription(charityInfo.description);
+		setEditCharityImageUrl(charityInfo.image_url);
+		setEditCharityRedirectUrl(charityInfo.redirect_url);
+		setEditCharityDialog(true);
+	};
+	const handleEditCharityConfirm = async () => {
+		// edit charity data
+		await editCharity(selected[0], {
+			key: selected[0],
+			name: editCharityName,
+			description: editCharityDescription,
+			image_url: editCharityImageUrl,
+			redirect_url: editCharityRedirectUrl
+		});
+		// refresh the page
+		setEditCharityDialog(false);
+		await onRefresh();
+		setEditCharityName("");
+		setEditCharityDescription("");
+		setEditCharityImageUrl("");
+		setEditCharityRedirectUrl("");
+		setSelected([]);
+	};
+	const handleEditCharityCancel = () => {
+		setEditCharityDialog(false);
+		setEditCharityName("");
+		setEditCharityDescription("");
+		setEditCharityImageUrl("");
+		setEditCharityRedirectUrl("");
+	};
+	const handleEditCharityImage = async (file) => {
+		const responseUrl = await uploadCharityLogo(file.name, file);
+		setEditCharityImageUrl(responseUrl);
+	};
 
 	// DELETE CHARITIES
 	const handleDeleteCharities = () => {
@@ -153,6 +208,27 @@ const CharityTable = (props) => {
 	};
 	const handleDeleteCharitiesCancel = () => {
 		setConfirmDeleteSelectedDialog(false);
+	};
+
+	// ADD REGION
+	const handleAddRegion = (charityKey) => {
+		setConfirmAddRegionDialog(true);
+		setConfirmAddRegionCharityKey(charityKey);
+	};
+	const handleAddRegionCharity = (e) => {
+		const inputRegions = e.target.value;
+		setAddRegionCharity(inputRegions);
+	};
+	const handleAddRegionConfirm = async () => {
+		// add charity information
+		await addRegionsToCharity(confirmAddRegionCharityKey, charities[confirmAddRegionCharityKey].name, addRegionCharity);
+		// refresh the page
+		setConfirmAddRegionDialog(false);
+		setConfirmAddRegionCharityKey(null);
+		await onRefresh();
+	};
+	const handleAddRegionCancel = () => {
+		setConfirmAddRegionDialog(false);
 	};
 
 	// DELETE REGION
@@ -184,15 +260,15 @@ const CharityTable = (props) => {
 					: (
 						<React.Fragment>
 							<Typography variant="h6" id="tableTitle" component="div">List of Charities</Typography>
-							<RefreshIcon className="toolbar-button" onClick={onRefresh} />
-							<AddIcon className="toolbar-button" onClick={handleAddCharity} />
+							<Tooltip title="Refresh"><IconButton className="toolbar-button" onClick={onRefresh}><RefreshIcon /></IconButton></Tooltip>
+							<Tooltip title="Add"><IconButton className="toolbar-button" onClick={handleAddCharity}><AddIcon /></IconButton></Tooltip>
 						</React.Fragment>
 					)}
 
-				{selected.length > 0 && <Tooltip title="Delete">
-					<IconButton className="toolbar-button" aria-label="delete" onClick={handleDeleteCharities} ><DeleteIcon /></IconButton>
-				</Tooltip>
-				}
+				{selected.length === 1 &&
+					<Tooltip title="Edit"><IconButton className="toolbar-button" aria-label="edit" onClick={handleEditCharity} ><EditIcon /></IconButton></Tooltip>}
+				{selected.length > 0 &&
+					<Tooltip title="Delete"><IconButton className="toolbar-button" aria-label="delete" onClick={handleDeleteCharities} ><DeleteIcon /></IconButton></Tooltip>}
 			</Toolbar>
 			<TableContainer>
 				<Table className="charity-table" aria-label="simple table">
@@ -235,8 +311,11 @@ const CharityTable = (props) => {
 										{charityInfo.regions.map((region) => <Tooltip title={region.name} key={region.key}>
 											<Chip label={region.key} onDelete={() => handleDeleteRegion(charityKey, region.key)} color="primary" />
 										</Tooltip>)}
+										<Chip label="+" onClick={() => handleAddRegion(charityKey)} color="secondary" />
 									</TableCell>
-									<TableCell align="right">{charityInfo.image_url}</TableCell>
+									<TableCell align="right">
+										{charityInfo.image_url ? <CharityLogo url={charityInfo.image_url} info={charityInfo} /> : null}
+									</TableCell>
 									<TableCell align="right"><a href={charityInfo.redirect_url}>{charityInfo.redirect_url}</a></TableCell>
 								</TableRow>
 							);
@@ -258,14 +337,39 @@ const CharityTable = (props) => {
 						value={addCharityRegions} onChange={handleAddCharityRegions} >
 						{regionsList.map((region) => <MenuItem value={region[0]} key={region[0]}>{region[1].name}</MenuItem>)}
 					</Select>
-					<TextField margin="dense" id="image_url" label="Image" fullWidth
-						value={addCharityImageUrl} onChange={(e) => setAddCharityImageUrl(e.target.value)} />
+					<InputLabel style={{ marginTop: "1em" }}>Upload Charity Logo</InputLabel><br/>
+					<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+						{addCharityImageUrl && <CharityLogo url={addCharityImageUrl} info={addCharityName} size="lg" />}
+						<input input type="file" label="Image" accept="image/*" onChange={(e) => handleAddCharityImage(e.target.files[0])} />
+					</div>
 					<TextField margin="dense" id="redirect_url" label="Website" fullWidth required
 						value={addCharityRedirectUrl} onChange={(e) => setAddCharityRedirectUrl(e.target.value)} />
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleAddCharityCancel} color="primary">Cancel</Button>
 					<Button onClick={handleAddCharityConfirm} color="primary">Add</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Edit Charity */}
+			<Dialog open={editCharityDialog} aria-labelledby="form-dialog-title">
+				<DialogTitle id="form-dialog-title">Edit Charity &quot;{charities[selected[0]] && charities[selected[0]].name}&quot;</DialogTitle>
+				<DialogContent>
+					<TextField autoFocus margin="dense" id="name" label="Name" fullWidth required
+						value={editCharityName} onChange={(e) => setEditCharityName(e.target.value)} />
+					<TextField margin="dense" id="description" label="Description" fullWidth required
+						value={editCharityDescription} onChange={(e) => setEditCharityDescription(e.target.value)} />
+					<InputLabel style={{ marginTop: "1em" }}>Upload Charity Logo</InputLabel><br/>
+					<div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+						{editCharityImageUrl && <CharityLogo url={editCharityImageUrl} info={editCharityName} size="lg" />}
+						<input input type="file" label="Image" accept="image/*" onChange={(e) => handleEditCharityImage(e.target.files[0])} />
+					</div>
+					<TextField margin="dense" id="redirect_url" label="Website" fullWidth required
+						value={editCharityRedirectUrl} onChange={(e) => setEditCharityRedirectUrl(e.target.value)} />
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleEditCharityCancel} color="primary">Cancel</Button>
+					<Button onClick={handleEditCharityConfirm} color="primary">Update</Button>
 				</DialogActions>
 			</Dialog>
 
@@ -281,6 +385,30 @@ const CharityTable = (props) => {
 				<DialogActions>
 					<Button autoFocus onClick={handleDeleteCharitiesCancel} color="primary">Cancel</Button>
 					<Button onClick={handleDeleteCharitiesConfirm} variant="contained" color="primary">Ok</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Add Region To Charity */}
+			<Dialog
+				disableBackdropClick
+				disableEscapeKeyDown
+				maxWidth="xs"
+				aria-labelledby="confirmation-dialog-title"
+				open={confirmAddRegionDialog}
+			>
+				<DialogTitle id="confirmation-dialog-title">
+                    Adding Regions to &quot;{charities[confirmAddRegionCharityKey] && charities[confirmAddRegionCharityKey].name}&quot;
+				</DialogTitle>
+				<DialogContent>
+					<InputLabel style={{ marginTop: "1em" }}>Regions</InputLabel>
+					<Select margin="dense" id="regions" label="Regions" multiple fullWidth required
+						value={addRegionCharity} onChange={handleAddRegionCharity} >
+						{regionsList.map((region) => <MenuItem value={region[0]} key={region[0]}>{region[1].name}</MenuItem>)}
+					</Select>
+				</DialogContent>
+				<DialogActions>
+					<Button autoFocus onClick={handleAddRegionCancel} color="primary">Cancel</Button>
+					<Button onClick={handleAddRegionConfirm} variant="contained" color="primary">Ok</Button>
 				</DialogActions>
 			</Dialog>
 
