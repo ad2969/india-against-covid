@@ -71,7 +71,7 @@ const LeafletMap = (props) => {
 	};
 
 	const zoomToRegion = (bounds) => {
-		mapRef.current.flyToBounds(bounds);
+		mapRef.current.flyToBounds(bounds, { duration: 0.5 });
 	};
 
 	const handleMouseoverRegion = (e) => {
