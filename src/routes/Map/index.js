@@ -13,6 +13,8 @@ import IndiaGeoJson from "../../assets/india.simplified.json";
 const Map = () => {
 	const history = useHistory();
 
+	const [geoJson, setGeoJson] = useState({});
+
 	const [regions, setRegions] = useState({});
 	const [regionDataCharities, setRegionDataCharities] = useState(null);
 	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
@@ -29,10 +31,53 @@ const Map = () => {
 			console.debug("** API GET: COVID DATA");
 			const covidDataResponse = await fetchCovidDatabase();
 
+			const geoJsonFeatures = [];
+
+			// **********************
+			// TEMP: AVERAGE COUNTING
+			let average = 0;
+			let averageNeg = 0;
+			let averagePos = 0;
+			// **********************
+
 			for (const key in regionsResponse) {
 				const data = Object.values(covidDataResponse.regionData).find((region) => region.region === regionsResponse[key].name);
+				// indicate if data cannot be found (something wrong that needs to be updated!)
+				if (!data || isEmpty(data)) {
+					console.error(`COVID data not found for region '${regionsResponse[key].name}'`);
+					continue;
+				}
 				regionsResponse[key] = { ...regionsResponse[key], ...data };
+
+				// calculate and add severity index to geojson data
+				const severityIndex = data.newInfected / data.totalInfected * 100;
+
+				// **********************
+				// TEMP: AVERAGE COUNTING
+				average += severityIndex;
+				if (severityIndex < 0) averageNeg += severityIndex;
+				else averagePos += severityIndex;
+				// **********************
+
+				const feature = IndiaGeoJson.features.find((feature) => feature.properties.code === key);
+				// indicate if data cannot be found (something wrong that needs to be updated!)
+				if (!feature || isEmpty(feature)) {
+					console.error(`No GeoJSON data found for region '${regionsResponse[key].name}'`);
+					continue;
+				}
+				feature.properties.severityIndex = severityIndex;
+				geoJsonFeatures.push(feature);
 			}
+
+			// **********************
+			// TEMP: AVERAGE COUNTING
+			console.log("AVERAGES", average, averageNeg, averagePos, Object.keys(regionsResponse).length);
+			// **********************
+
+			setGeoJson({
+				type: "FeatureCollection",
+				features: geoJsonFeatures
+			});
 
 			setRegions(regionsResponse);
 			setBasicDataLoaded(true);

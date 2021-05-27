@@ -14,13 +14,13 @@ const MAPBOX_TOKEN = process.env.REACT_APP_MAPBOX_TOKEN;
 // https://leafletjs.com/examples/geojson/
 
 const COLOR_PALETTE = {
-	1000: "#800026",
-	500: "#BD0026",
-	200: "#E31A1C",
-	100: "#FC4E2A",
-	50: "#FD8D3C",
-	20: "#FEB24C",
-	10: "#FED976",
+	vvred: "#800026",
+	vred: "#BD0026",
+	red: "#E31A1C",
+	orgred: "#FC4E2A",
+	org: "#FD8D3C",
+	orgyel: "#FEB24C",
+	yel: "#FED976",
 	default: "#FFEDA0",
 	line: "#fff",
 	lineHighlight: "#666"
@@ -28,19 +28,16 @@ const COLOR_PALETTE = {
 
 const DEFAULT_STYLES = {
 	color: COLOR_PALETTE.line,
-	fillColor: COLOR_PALETTE.default,
 	fillOpacity: 0.3,
 	weight: 2
 };
 const LOCK_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
-	fillColor: COLOR_PALETTE.default,
 	fillOpacity: 0.7,
 	weight: 5
 };
 const HIGHLIGHT_STYLES = {
 	color: COLOR_PALETTE.lineHighlight,
-	fillColor: COLOR_PALETTE.default,
 	fillOpacity: 0.7,
 	weight: 2
 };
@@ -61,6 +58,17 @@ const LeafletMap = (props) => {
 	const mapRef = useRef();
 	const geoJsonRef = useRef();
 	const [selectedLayer, setSelectedLayer] = useState(null);
+
+	const getRegionColor = (index) => {
+		if (index > 10) return COLOR_PALETTE.vvred;
+		else if (index > 5) return COLOR_PALETTE.vred;
+		else if (index > 1) return COLOR_PALETTE.red;
+		else if (index > 0.5) return COLOR_PALETTE.orgred;
+		else if (index > 0) return COLOR_PALETTE.org;
+		else if (index > -5) return COLOR_PALETTE.orgyel;
+		else if (index > -10) return COLOR_PALETTE.yel;
+		else return COLOR_PALETTE.default;
+	};
 
 	const zoomToRegion = (bounds) => {
 		mapRef.current.flyToBounds(bounds);
@@ -143,10 +151,12 @@ const LeafletMap = (props) => {
 						click: handleClickRegion
 					}}
 					onEachFeature={(feature, layer) => {
-					// set the layer id based on the region id
+						// set the layer id based on the region id
 						layer._leaflet_id = feature.properties.code;
-						// set default layer styles for every layer
-						layer.setStyle(DEFAULT_STYLES);
+						// set layer styles for every layer
+						// get the fill color based on the severity index
+						const color = getRegionColor(feature.properties.severityIndex);
+						layer.setStyle({ ...DEFAULT_STYLES, fillColor: color });
 					}}
 				/>}
 			</MapContainer>
