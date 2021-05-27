@@ -1,4 +1,4 @@
-import { db } from "./firebase";
+import { db, storage } from "./firebase";
 
 const INDIA_CASES_API = "https://api.apify.com/v2/key-value-stores/toDWvRj1JpTXiM8FF/records/LATEST";
 
@@ -135,6 +135,29 @@ export const deleteRegionFromCharity = async (charityKey, regionKey) => {
 	try {
 		const regionCharityRef = db.ref(`/regions_charities/${regionKey}/${charityKey}`);
 		await regionCharityRef.remove();
+	} catch (err) {
+		console.error(err);
+		throw new Error("Error with firebase database");
+	}
+};
+
+export const editCharity = async (charityKey, params) => {
+	try {
+		const charityRef = db.ref(`/charities/${charityKey}`);
+		const response = await charityRef.update(params);
+		return response;
+	} catch (err) {
+		console.error(err);
+		throw new Error("Error with firebase database");
+	}
+};
+
+export const uploadCharityLogo = async (imgName, file) => {
+	try {
+		const imagesRef = storage.ref(`images/${Date.now()}-${imgName}`);
+		const response = await imagesRef.put(file);
+		const imageUrl = await response.ref.getDownloadURL();
+		return imageUrl;
 	} catch (err) {
 		console.error(err);
 		throw new Error("Error with firebase database");
