@@ -43,7 +43,7 @@ const HIGHLIGHT_STYLES = {
 };
 
 const DEFAULT_CENTER = [20.5, 80];
-const DEFAULT_BOUNDS = [[40, 65], [5, 100]];
+const DEFAULT_BOUNDS = [[40, 60], [5, 105]];
 
 const LeafletMap = (props) => {
 	const {

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { CircularProgress } from "@material-ui/core";
 import MapHeader from "../../components/Header/map";
 import LeafletMap from "./Leaflet";
+import Region from "./Region";
 import "./index.mod.scss";
 
 import { isEmpty } from "../../utils";
@@ -12,8 +14,6 @@ import IndiaGeoJson from "../../assets/india.simplified.json";
 
 const Map = () => {
 	const history = useHistory();
-
-	const [geoJson, setGeoJson] = useState({});
 
 	const [regions, setRegions] = useState({});
 	const [regionDataCharities, setRegionDataCharities] = useState(null);
@@ -31,19 +31,18 @@ const Map = () => {
 			console.debug("** API GET: COVID DATA");
 			const covidDataResponse = await fetchCovidDatabase();
 
-			const geoJsonFeatures = [];
-
 			// **********************
-			// TEMP: AVERAGE COUNTING
+			// TEMP: AVERAGE SEVERITY COUNTING
 			let average = 0;
 			let averageNeg = 0;
 			let averagePos = 0;
 			// **********************
 
 			for (const key in regionsResponse) {
+				// combine covid data into region data
 				const data = Object.values(covidDataResponse.regionData).find((region) => region.region === regionsResponse[key].name);
 				// indicate if data cannot be found (something wrong that needs to be updated!)
-				if (!data || isEmpty(data)) {
+				if (isEmpty(data)) {
 					console.error(`COVID data not found for region '${regionsResponse[key].name}'`);
 					continue;
 				}
@@ -53,34 +52,30 @@ const Map = () => {
 				const severityIndex = data.newInfected / data.totalInfected * 100;
 
 				// **********************
-				// TEMP: AVERAGE COUNTING
+				// TEMP: AVERAGE SEVERITY COUNTING
 				average += severityIndex;
 				if (severityIndex < 0) averageNeg += severityIndex;
 				else averagePos += severityIndex;
 				// **********************
 
+				// combine severity index calculations (covid data) to geojson
 				const feature = IndiaGeoJson.features.find((feature) => feature.properties.code === key);
 				// indicate if data cannot be found (something wrong that needs to be updated!)
-				if (!feature || isEmpty(feature)) {
+				if (isEmpty(feature)) {
 					console.error(`No GeoJSON data found for region '${regionsResponse[key].name}'`);
 					continue;
 				}
+				// this will directly edit the json object getting passed
 				feature.properties.severityIndex = severityIndex;
-				geoJsonFeatures.push(feature);
 			}
 
 			// **********************
-			// TEMP: AVERAGE COUNTING
+			// TEMP: AVERAGE SEVERITY COUNTING
 			console.log("AVERAGES", average, averageNeg, averagePos, Object.keys(regionsResponse).length);
 			// **********************
 
-			setGeoJson({
-				type: "FeatureCollection",
-				features: geoJsonFeatures
-			});
-
 			setRegions(regionsResponse);
-			setBasicDataLoaded(true);
+			setBasicDataLoaded(covidDataResponse.lastUpdatedAtApify);
 		} catch (err) {
 			setError(true);
 			console.error(err);
@@ -150,7 +145,7 @@ const Map = () => {
 		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
 			<div className="map-container">
-				{basicDataLoaded && <LeafletMap
+				{!!basicDataLoaded && <LeafletMap
 					loaded={mapLoaded}
 					setLoaded={setMapLoaded}
 					data={IndiaGeoJson}
@@ -158,22 +153,16 @@ const Map = () => {
 					handleSelectMapRegion={handleSelectMapRegion}
 					sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
 				/>}
-				<div className={`map-sidebar ${selectedRegionKey && regionDataCharities && "active"}`}>
+				<div className={`map-sidebar ${selectedRegionKey && "active"}`}>
 					{regionDataLoaded && selectedRegionKey
-						? <React.Fragment>
-							<h3>Searching for region &quot;{regions[selectedRegionKey].name}&quot;</h3>
-							<br /><hr /><br />
-							<div>Active Cases: {regions[selectedRegionKey].activeCases}</div>
-							<div>Recovered: {regions[selectedRegionKey].recovered} (+{regions[selectedRegionKey].newRecovered})</div>
-							<div>Deceased: {regions[selectedRegionKey].deceased} (+{regions[selectedRegionKey].newDeceased})</div>
-							<div>Total Infected: {regions[selectedRegionKey].totalInfected} (+{regions[selectedRegionKey].newInfected})</div>
-							<br /><hr /><br />
-							<div>Charity Data for Given Region: {JSON.stringify(regionDataCharities)}</div>
-						</React.Fragment>
-						: <div>Region Data: {JSON.stringify(regions)}</div>}
-
-					<div>Data loaded? {basicDataLoaded && regionDataLoaded ? "yes" : "no"}</div>
-					<div>Error found? {error ? "yes" : "no"}</div>
+						? <Region
+							error={error}
+							refresh={() => { handleSelectMapRegion(); }}
+							lastUpdated={basicDataLoaded}
+							selectedRegionInfo={regions[selectedRegionKey]}
+							selectedRegionCharities={regionDataCharities}
+						/>
+						: <CircularProgress />}
 				</div>
 			</div>
 		</div>
