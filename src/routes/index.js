@@ -21,7 +21,7 @@ function Routes () {
 
 	useEffect(() => {
 		auth.onAuthStateChanged((user) => {
-			console.log("User state changed!", String(Boolean(user)));
+			console.debug("User state changed!", String(Boolean(user)));
 			if (!isAdminChecked) setIsAdminChecked(true);
 			setIsAdmin(!!user);
 		});

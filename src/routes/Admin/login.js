@@ -41,7 +41,7 @@ function AdminLogin () {
 			await loginAsAdmin(email, password);
 			history.push("/admin/home");
 		} catch (err) {
-			console.log("ERR", err);
+			console.log("Error during login:", err);
 			setError(err);
 		}
 	};

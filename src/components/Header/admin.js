@@ -26,7 +26,7 @@ const AdminHeader = () => {
 	};
 
 	return (
-		<AppBar position="static" className="admin-header">
+		<AppBar position="relative" className="admin-header">
 			<Toolbar className="admin-header-toolbar">
 				<div className="header-title">
 					<Button onClick={redirectAdminHome} className="header-text">Welcome, Admin</Button>
