@@ -1,5 +1,7 @@
 import { db, storage } from "./firebase";
 
+const INDIA_CASES_API = "https://api.apify.com/v2/key-value-stores/toDWvRj1JpTXiM8FF/records/LATEST";
+
 export const fetchRegions = async () => {
 	try {
 		const regionsRef = db.ref("/regions");
@@ -8,7 +10,7 @@ export const fetchRegions = async () => {
 			const data = snapshot.val();
 			return data;
 		} else {
-			console.log("** No state data available");
+			console.log("   No state data available");
 			return {};
 		}
 	} catch (err) {
@@ -25,7 +27,7 @@ export const fetchCharities = async () => {
 			const data = snapshot.val();
 			return data;
 		} else {
-			console.log("** No charity data available");
+			console.log("   No charity data available");
 			return {};
 		}
 	} catch (err) {
@@ -43,7 +45,7 @@ const fetchCharityInfo = async (charityKey) => {
 			const data = snapshot.val();
 			return data;
 		} else {
-			console.log("** Charity not found");
+			console.log("   Charity not found");
 			return {};
 		}
 	} catch (err) {
@@ -61,7 +63,7 @@ export const fetchAllRegionsCharities = async () => {
 			const data = snapshot.val();
 			return data;
 		} else {
-			console.log("** No charity and region data");
+			console.log("   No charity and region data");
 			return [];
 		}
 	} catch (err) {
@@ -84,7 +86,7 @@ export const fetchRegionCharities = async (regionKey, info = false) => {
 				return charitiesInRegion;
 			} else return data;
 		} else {
-			console.log("** No charity data available for the given region");
+			console.log("   No charity data available for the given region");
 			return [];
 		}
 	} catch (err) {
@@ -159,5 +161,17 @@ export const uploadCharityLogo = async (imgName, file) => {
 	} catch (err) {
 		console.error(err);
 		throw new Error("Error with firebase database");
+	}
+};
+
+// EXTERNAL API
+export const fetchCovidDatabase = async () => {
+	try {
+		const response = await fetch(INDIA_CASES_API);
+		const body = await response.json();
+		return body;
+	} catch (err) {
+		console.error("error fetching from COVID database");
+		throw err;
 	}
 };

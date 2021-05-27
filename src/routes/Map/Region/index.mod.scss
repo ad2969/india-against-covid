@@ -1,0 +1,110 @@
+.region {
+    padding: 0 1.5em;
+    height: 100%;
+    overflow-y: auto;
+    
+    @include for-phone-landscape-up {
+        padding: 0 2em;
+    }
+
+    h1 {
+        color: $accent;
+        font-weight: bold;
+        margin-bottom: 0;
+        margin-top: 1em;
+        display: flex;
+    }
+    hr {
+        opacity: 0.1;
+    }
+
+}
+.region-error {
+    @include flex-center;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+.region-statistics {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: 0.8em;
+
+    span:nth-child(odd) {
+        margin-right: 0.5em;
+    }
+    span:nth-child(even) {
+        margin-left: 0.5em;
+    }
+    // except the last two
+    span:not(:nth-last-child(-n+2)) {
+        margin-bottom: 1em;
+    }
+}
+.region-statistics-update {
+    margin-top: 1em;
+    margin-right: 2em;
+    font-size: 0.5em;
+    font-style: italic;
+    text-align: right;
+}
+
+.stat-container {
+    background: $white;
+    border-radius: 1em;
+    width: calc(50% - 3em);
+    padding: 0.75em 1em;
+    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 2px 0px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+
+    .stat {
+        font-size: 1.75em;
+    }
+    .stat-label {
+        margin-bottom: 0.25em;
+    }
+    .stat-sub {
+        &.green {
+            color: $green;
+        }
+        &.red {
+            color: $red;
+        }
+    }
+}
+
+.region-charities {
+    height: max-content;
+    padding-bottom: 2em;
+}
+
+.charity-card {
+    margin-bottom: 1em;
+
+    .MuiCardHeader-action {
+        margin: 0;
+        align-self: flex-end;
+        .MuiButtonBase-root  {
+            padding: 0;
+        }
+    }
+
+    .charity-card-image {
+        width: 3.5em;
+        height: 3.5em;
+    }
+
+    .charity-title {
+        margin: 0;
+    }
+
+    .charity-description {
+        font-size: 0.9em;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+}
