@@ -1,0 +1,18 @@
+.profile {
+    box-shadow: none !important;
+    width: 15rem;
+    margin: 2rem auto;
+
+    .profile-image {
+        width: 12rem;
+        height: 12rem;
+        margin: 0 auto;
+        border-radius: 50%;
+    }
+
+    .profile-actions {
+        justify-content: center;
+        padding-top: 1rem;
+        color: $accent;
+    }
+}
