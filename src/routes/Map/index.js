@@ -49,7 +49,7 @@ const Map = () => {
 				regionsResponse[key] = { ...regionsResponse[key], ...data };
 
 				// calculate and add severity index to geojson data
-				const severityIndex = data.newInfected / data.totalInfected * 100;
+				const severityIndex = data.activeCases / regionsResponse[key].population_2021 * 100;
 
 				// **********************
 				// TEMP: AVERAGE SEVERITY COUNTING

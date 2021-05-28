@@ -63,11 +63,11 @@ const LeafletMap = (props) => {
 	const getRegionColor = (index) => {
 		if (index > 10) return COLOR_PALETTE.vvred;
 		else if (index > 5) return COLOR_PALETTE.vred;
-		else if (index > 1) return COLOR_PALETTE.red;
-		else if (index > 0.5) return COLOR_PALETTE.orgred;
-		else if (index > 0) return COLOR_PALETTE.org;
-		else if (index > -5) return COLOR_PALETTE.orgyel;
-		else if (index > -10) return COLOR_PALETTE.yel;
+		else if (index > 2) return COLOR_PALETTE.red;
+		else if (index > 1) return COLOR_PALETTE.orgred;
+		else if (index > 0.5) return COLOR_PALETTE.org;
+		else if (index > 0.2) return COLOR_PALETTE.orgyel;
+		else if (index > 0.1) return COLOR_PALETTE.yel;
 		else return COLOR_PALETTE.default;
 	};
 
