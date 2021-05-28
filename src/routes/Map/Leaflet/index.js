@@ -58,6 +58,7 @@ const LeafletMap = (props) => {
 	const mapRef = useRef();
 	const geoJsonRef = useRef();
 	const [selectedLayer, setSelectedLayer] = useState(null);
+	const [isMapFlying, setIsMapFlying] = useState(false);
 
 	const getRegionColor = (index) => {
 		if (index > 10) return COLOR_PALETTE.vvred;
@@ -72,13 +73,17 @@ const LeafletMap = (props) => {
 
 	const zoomToRegion = (bounds) => {
 		mapRef.current.flyToBounds(bounds, { duration: 0.75 });
+		setIsMapFlying(true);
 	};
 
 	const handleMapMoveEnd = () => {
-		console.log("-- STOPPED MOVING");
+		setIsMapFlying(false);
 	};
 
 	const handleMouseoverRegion = (e) => {
+		// do nothing if the map is flying
+		if (isMapFlying) return;
+		// do nothing if hovering over the selected layer
 		const layer = e.sourceTarget;
 		if (selectedLayer && layer.feature.properties.code === selectedLayer.feature.properties.code) return;
 
@@ -88,6 +93,9 @@ const LeafletMap = (props) => {
 	};
 
 	const handleMouseoutRegion = (e) => {
+		// do nothing if the map is flying
+		if (isMapFlying) return;
+		// do nothing if hovering over the selected layer
 		const layer = e.sourceTarget;
 		if (selectedLayer && layer.feature.properties.code === selectedLayer.feature.properties.code) return;
 
@@ -97,14 +105,18 @@ const LeafletMap = (props) => {
 	};
 
 	const handleClickRegion = (e) => {
+		// do nothing if the map is flying
+		if (isMapFlying) return;
+		// change the url query accordingly
 		const layer = e.sourceTarget;
-		// change the url query
 		if (selectedLayer && layer.feature.properties.code === selectedLayer.feature.properties.code) handleSelectMapRegion(null);
 		else handleSelectMapRegion(layer.feature.properties.code);
 	};
 
 	useEffect(() => {
 		if (!loaded || !geoJsonRef.current || !mapRef.current) return;
+
+		mapRef.current.on("moveend", handleMapMoveEnd);
 		// reset previous layer styles, if any
 		if (selectedLayer) selectedLayer.setStyle(DEFAULT_STYLES);
 		if (selectedRegionKey) {
@@ -120,7 +132,7 @@ const LeafletMap = (props) => {
 			setSelectedLayer(layer);
 		} else {
 			// zoom to default view
-			zoomToRegion(DEFAULT_BOUNDS);
+			zoomToRegion(DEFAULT_BOUNDS, false);
 			// empty layer saves
 			setSelectedLayer(null);
 		}
@@ -152,7 +164,7 @@ const LeafletMap = (props) => {
 					eventHandlers={{
 						mouseover: handleMouseoverRegion,
 						mouseout: handleMouseoutRegion,
-						moveend: handleMapMoveEnd,
+						// moveend: handleMapMoveEnd, * THIS DOESN'T WORK SOMEHOW. CHECK "USEEFFECT"
 						click: handleClickRegion
 					}}
 					onEachFeature={(feature, layer) => {
