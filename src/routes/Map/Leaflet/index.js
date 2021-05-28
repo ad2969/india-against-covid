@@ -71,7 +71,11 @@ const LeafletMap = (props) => {
 	};
 
 	const zoomToRegion = (bounds) => {
-		mapRef.current.flyToBounds(bounds, { duration: 1 });
+		mapRef.current.flyToBounds(bounds, { duration: 0.75 });
+	};
+
+	const handleMapMoveEnd = () => {
+		console.log("-- STOPPED MOVING");
 	};
 
 	const handleMouseoverRegion = (e) => {
@@ -148,6 +152,7 @@ const LeafletMap = (props) => {
 					eventHandlers={{
 						mouseover: handleMouseoverRegion,
 						mouseout: handleMouseoutRegion,
+						moveend: handleMapMoveEnd,
 						click: handleClickRegion
 					}}
 					onEachFeature={(feature, layer) => {
