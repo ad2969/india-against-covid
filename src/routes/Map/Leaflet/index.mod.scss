@@ -13,10 +13,10 @@
     top: 0;
     left: 0;
     transform: translateX(0);
-    transition: transform 1s linear;
+    transition: transform 0.75s linear;
 
     &.sidebar-open {
-        transition: transform 1s cubic-bezier(.26,.75,.9,.91);
+        transition: transform 0.75s cubic-bezier(.26,.75,.9,.91);
         transform: translateX(-15%);
     }
 
