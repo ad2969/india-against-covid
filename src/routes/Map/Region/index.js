@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import { Button, Tooltip } from "@material-ui/core";
 import { Close as CloseIcon } from "@material-ui/icons";
 import RegionStatistic from "./statistic";
 import CharityCard from "./charity";
@@ -26,6 +26,9 @@ const Region = (props) => {
 		: (
 			<div className="region">
 				<h1>{selectedRegionInfo.name} <CloseIcon className="close-button button button--scale" onClick={refresh}/></h1>
+				<Tooltip title="Based on UIDAI (Unique Identification Authority of India) prediction for 2021" arrow>
+					<div>Population Estimate: {selectedRegionInfo.population_2021 / 1000000} (millions)</div>
+				</Tooltip>
 				<hr />
 				<h3>COVID Statistics</h3>
 				<div className="region-statistics">

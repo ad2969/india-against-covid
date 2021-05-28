@@ -1,0 +1,146 @@
+{
+    "AN": {
+        "name": "Andaman and Nicobar Islands",
+        "population_2021": 420000
+    },
+    "AD": {
+        "name": "Andhra Pradesh",
+        "population_2021": 54400000
+    },
+    "AR": {
+        "name": "Arunachal Pradesh",
+        "population_2021": 1592000
+    },
+    "AS": {
+        "name": "Assam",
+        "population_2021": 36000000
+    },
+    "BR": {
+        "name": "Bihar",
+        "population_2021": 127000000
+    },
+    "CH": {
+        "name": "Chandigarh",
+        "population_2021": 1169000
+    },
+    "CG": {
+        "name": "Chhattisgarh",
+        "population_2021": 29800000
+    },
+    "DNHDD": {
+        "name": "Dadra and Nagar Haveli and Daman and Diu",
+        "population_2021": 620000
+    },
+    "DL": {
+        "name": "Delhi",
+        "population_2021": 19000000
+    },
+    "GA": {
+        "name": "Goa",
+        "population_2021": 1500000
+    },
+    "GJ": {
+        "name": "Gujarat",
+        "population_2021": 64300000
+    },
+    "HR": {
+        "name": "Haryana",
+        "population_2021": 28500000
+    },
+    "HP": {
+        "name": "Himachal Pradesh",
+        "population_2021": 7500000
+    },
+    "JK": {
+        "name": "Jammu and Kashmir",
+        "population_2021": 13800000
+    },
+    "JH": {
+        "name": "Jharkhand",
+        "population_2021": 39200000
+    },
+    "KA": {
+        "name": "Karnataka",
+        "population_2021": 68300000
+    },
+    "KL": {
+        "name": "Kerala",
+        "population_2021": 36000000
+    },
+    "LA": {
+        "name": "Ladakh",
+        "population_2021": 290000
+    },
+    "LD": {
+        "name": "Lakshadweep",
+        "population_2021": 74151
+    },
+    "MP": {
+        "name": "Madhya Pradesh",
+        "population_2021": 87000000
+    },
+    "MH": {
+        "name": "Maharashtra",
+        "population_2021": 124300000
+    },
+    "MN": {
+        "name": "Manipur",
+        "population_2021": 3200000
+    },
+    "ML": {
+        "name": "Meghalaya",
+        "population_2021": 3400000
+    },
+    "MZ": {
+        "name": "Mizoram",
+        "population_2021": 1255000
+    },
+    "NL": {
+        "name": "Nagaland",
+        "population_2021": 2300000
+    },
+    "OD": {
+        "name": "Odisha",
+        "population_2021": 46900000
+    },
+    "PY": {
+        "name": "Puducherry",
+        "population_2021": 1432000
+    },
+    "PB": {
+        "name": "Punjab",
+        "population_2021": 30000000
+    },
+    "RJ": {
+        "name": "Rajasthan",
+        "population_2021": 82500000
+    },
+    "SK": {
+        "name": "Sikkim",
+        "population_2021": 700000
+    },
+    "TN": {
+        "name": "Tamil Nadu",
+        "population_2021": 78500000
+    },
+    "TS": {
+        "name": "Telangana",
+        "population_2021": 39800000
+    },
+    "TR": {
+        "name": "Tripura",
+        "population_2021": 4200000
+    },
+    "UK": {
+        "name": "Uttarakhand",
+        "population_2021": 11400000
+    },
+    "UP": {
+        "name": "Uttar Pradesh",
+        "population_2021": 240000000
+    },
+    "WB": {
+        "name": "West Bengal",
+        "population_2021": 100000000
+    }
+}
