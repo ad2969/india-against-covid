@@ -1,15 +1,10 @@
-.About {
-    // honestly whatever man
-    overflow: hidden;
-}
-
 .about-background {
     background-image: url("../../assets/about.png");
     background-repeat: no-repeat;
-    background-size: 150% auto;
+    background-size: cover;
     background-position: 50%;
     height: 30vh;
-    min-height: 15rem;
+    min-height: 20rem;
     position: relative;
     width: 100%;
 
@@ -25,7 +20,7 @@
 }
 
 .about-head-container {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     height: 100%;
     width: 100%;
 
