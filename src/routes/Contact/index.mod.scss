@@ -1,0 +1,96 @@
+.contact-background {
+    background-image: url("../../assets/contact.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 50%;
+    height: 30vh;
+    min-height: 20rem;
+    position: relative;
+    width: 100%;
+
+    @include for-phone-landscape-up {
+        height: 30vh;
+        min-height: 20rem;
+    }
+
+    @include for-laptop-up {
+        height: 40vh;
+        min-height: 25rem;
+    }
+}
+
+.contact-head-container {
+    background: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    width: 100%;
+
+    @include flex-center;
+    flex-direction: column;
+    color: $white;
+
+    .contact-title {
+        font-size: 2rem;
+        max-width: 80%;
+
+        @include for-laptop-up {
+            font-size: 3rem;
+        }
+    }
+
+    .contact-description {
+        max-width: 80%;
+
+        @include for-laptop-up {
+            font-size: 1.25rem;
+            max-width: 60%;
+        }
+    }
+}
+
+.contact-body {
+    margin: 0;
+    width: 100%;
+
+    @include flex-center;
+
+    @include for-laptop-up {
+        margin: 0 20%;
+        width: 60%;
+    }
+
+    .contact-form {
+        max-width: 90%;
+        margin: 3em 1em;
+        overflow: hidden;
+
+        @include for-phone-landscape-up {
+            max-width: 80%;
+        }
+    }
+}
+
+.contact-request {
+    background-color: $accent;
+    display: flex;
+    flex-direction: column;
+    flex: 50%;
+    padding: 4em;
+    width: calc(100% - 8em);
+
+    @include flex-center;
+    text-align: left;
+
+    .contact-request-button {
+        background-color: $white;
+        text-transform: lowercase;
+        margin: 1em 0;
+    }
+
+    @include for-laptop-up {
+        flex-direction: row;
+
+        .contact-request-button {
+            margin-left: 3em;
+        }
+    }
+}
