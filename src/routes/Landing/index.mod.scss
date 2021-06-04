@@ -1,0 +1,67 @@
+.landing-background {
+    background-image: url("../../assets/landing.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    position: relative;
+    width: 100%;
+
+    .landing-background-container {
+        background: rgba(0, 0, 0, 0.5);
+        height: 100%;
+        width: 100%;
+
+        @include flex-center;
+        flex-direction: column;
+
+        .landing-title {
+            color: $white;
+            font-size: 2rem;
+            max-width: 80%;
+
+            @include for-laptop-up {
+                font-size: 3rem;
+            }
+
+            .text-accent {
+                color: $accent;
+            }
+
+        }
+
+        .landing-buttons {
+            @include flex-center;
+            color: $black;
+            flex-direction: column;
+            width: 80%;
+
+            @include for-phone-landscape-up {
+                flex-direction: row;
+                width: auto;
+            }
+
+            .to-about, .to-home {
+                margin: 0.5em 1em;
+                text-transform: lowercase;
+                max-width: 15rem;
+                width: 80%;
+
+                @include for-phone-landscape-up {
+                    max-width: unset;
+                    padding-left: 2em;
+                    padding-right: 2em;
+                    width: auto;
+                }
+            }
+
+            .to-about {
+                background-color: $white;
+            }
+
+            .to-home {
+                background-color: $accent;
+            }
+        }
+}
+}

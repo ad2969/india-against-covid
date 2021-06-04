@@ -4,25 +4,50 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    padding: 3em;
+    overflow: hidden;
+    padding: 2em 0;
     width: 100vw;
+    flex-wrap: wrap;
 
     .footer-logo {
-        flex: 25%;
-        font-size: 5em;
+        display: none;
+
+        @include for-laptop-up {
+            display: block;
+            flex: 25% 1;
+            font-size: 5em;
+        }
     }
 
     .footer-links, .footer-contacts {
         color: white;
         display: flex;
         flex-direction: column;
-        margin: 1em 3em;
+        margin: 1em;
+        font-size: 0.75em;
+
+        @include for-phone-landscape-up {
+            font-size: 1em;
+        }
+
+        @include for-laptop-up {
+            margin: 1em 3em;
+        }
     }
     .footer-links {
-        flex: 45%;
+        flex: 20% 0;
+
+        @include for-laptop-up {
+            flex: 25% 1;
+        }
     }
     .footer-contacts {
-        flex: 30%;
+        flex: 30% 0;
+
+        @include for-laptop-up {
+            flex: 25% 1;
+        }
+    
         svg, span {
             vertical-align: middle;
         }
