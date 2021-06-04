@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { CircularProgress } from "@material-ui/core";
 import MapHeader from "../../components/Header/map";
 import LeafletMap from "./Leaflet";
 import Region from "./Region";
 import Loading from "../../components/Loading";
+import Error from "../../components/Error";
 import "./index.mod.scss";
 
 import { isEmpty } from "../../utils";
@@ -21,6 +21,7 @@ const Map = () => {
 	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
 
 	const [error, setError] = useState(false);
+	const [regionError, setRegionError] = useState(false);
 	const [basicDataLoaded, setBasicDataLoaded] = useState(false);
 	const [regionDataLoaded, setRegionDataLoaded] = useState(false);
 	const [mapLoaded, setMapLoaded] = useState(false);
@@ -78,7 +79,7 @@ const Map = () => {
 			setRegions(regionsResponse);
 			setBasicDataLoaded(covidDataResponse.lastUpdatedAtApify);
 		} catch (err) {
-			setError(true);
+			setError(err.message || true);
 			console.error(err);
 		}
 	};
@@ -90,21 +91,16 @@ const Map = () => {
 			setRegionDataCharities(charitiesInRegion);
 			setRegionDataLoaded(true);
 		} catch (err) {
-			setError(true);
+			setRegionError(true);
 			console.error(err);
 		}
 	};
 
 	const refreshPage = async () => {
-		try {
-			// refresh region data
-			await getRegions();
-			// set the query to none
-			history.replace({ region: "" });
-		} catch (err) {
-			setError(true);
-			console.error(err);
-		}
+		// refresh region data
+		await getRegions();
+		// set the query to none
+		history.replace({ region: "" });
 	};
 
 	const handleSelectMapRegion = (regionKey = null) => {
@@ -134,10 +130,8 @@ const Map = () => {
 		// do nothing if error exists, or if basic data hasn't been loaded
 		if (error || !basicDataLoaded) return;
 		// set to loaded if no region selected
-		if (!selectedRegionKey) {
-			setRegionDataLoaded(true);
-			return;
-		}
+		setRegionDataLoaded(false);
+		if (!selectedRegionKey) return;
 		// fetch all required data
 		getRegionDataCharities(selectedRegionKey);
 	}, [selectedRegionKey]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -146,7 +140,8 @@ const Map = () => {
 		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
 			<div className="map-container">
-				{basicDataLoaded
+				{error && <Error message={error} />}
+				{!error && (basicDataLoaded
 					? <LeafletMap
 						loaded={mapLoaded}
 						setLoaded={setMapLoaded}
@@ -155,17 +150,18 @@ const Map = () => {
 						handleSelectMapRegion={handleSelectMapRegion}
 						sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
 					/>
-					: <Loading stlyes={{ height: "100vh" }} />}
+					: <Loading />)}
 				<div className={`map-sidebar ${selectedRegionKey && "active"}`}>
-					{regionDataLoaded && selectedRegionKey
+					{selectedRegionKey
 						? <Region
-							error={error}
+							error={regionError}
+							loaded={regionDataLoaded}
 							refresh={() => { handleSelectMapRegion(); }}
 							lastUpdated={basicDataLoaded}
 							selectedRegionInfo={regions[selectedRegionKey]}
 							selectedRegionCharities={regionDataCharities}
 						/>
-						: <CircularProgress />}
+						: <Loading />}
 				</div>
 			</div>
 		</div>
