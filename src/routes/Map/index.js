@@ -33,13 +33,6 @@ const Map = () => {
 			console.debug("** API GET: COVID DATA");
 			const covidDataResponse = await fetchCovidDatabase();
 
-			// **********************
-			// TEMP: AVERAGE SEVERITY COUNTING
-			let average = 0;
-			let averageNeg = 0;
-			let averagePos = 0;
-			// **********************
-
 			for (const key in regionsResponse) {
 				// combine covid data into region data
 				const data = Object.values(covidDataResponse.regionData).find((region) => region.region === regionsResponse[key].name);
@@ -55,9 +48,7 @@ const Map = () => {
 
 				// **********************
 				// TEMP: AVERAGE SEVERITY COUNTING
-				average += severityIndex;
-				if (severityIndex < 0) averageNeg += severityIndex;
-				else averagePos += severityIndex;
+				console.log("SEVERITY", regionsResponse[key].name, severityIndex);
 				// **********************
 
 				// combine severity index calculations (covid data) to geojson
@@ -70,11 +61,6 @@ const Map = () => {
 				// this will directly edit the json object getting passed
 				feature.properties.severityIndex = severityIndex;
 			}
-
-			// **********************
-			// TEMP: AVERAGE SEVERITY COUNTING
-			console.log("AVERAGES", average, averageNeg, averagePos, Object.keys(regionsResponse).length);
-			// **********************
 
 			setRegions(regionsResponse);
 			setBasicDataLoaded(covidDataResponse.lastUpdatedAtApify);
