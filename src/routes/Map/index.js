@@ -4,6 +4,7 @@ import { CircularProgress } from "@material-ui/core";
 import MapHeader from "../../components/Header/map";
 import LeafletMap from "./Leaflet";
 import Region from "./Region";
+import Loading from "../../components/Loading";
 import "./index.mod.scss";
 
 import { isEmpty } from "../../utils";
@@ -145,14 +146,16 @@ const Map = () => {
 		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
 			<div className="map-container">
-				{!!basicDataLoaded && <LeafletMap
-					loaded={mapLoaded}
-					setLoaded={setMapLoaded}
-					data={IndiaGeoJson}
-					selectedRegionKey={selectedRegionKey}
-					handleSelectMapRegion={handleSelectMapRegion}
-					sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
-				/>}
+				{basicDataLoaded
+					? <LeafletMap
+						loaded={mapLoaded}
+						setLoaded={setMapLoaded}
+						data={IndiaGeoJson}
+						selectedRegionKey={selectedRegionKey}
+						handleSelectMapRegion={handleSelectMapRegion}
+						sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
+					/>
+					: <Loading stlyes={{ height: "100vh" }} />}
 				<div className={`map-sidebar ${selectedRegionKey && "active"}`}>
 					{regionDataLoaded && selectedRegionKey
 						? <Region
