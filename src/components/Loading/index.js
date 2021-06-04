@@ -2,9 +2,9 @@ import React from "react";
 import { CircularProgress } from "@material-ui/core";
 import "./index.mod.scss";
 
-const Loading = () => {
+const Loading = ({ icon = false }) => {
 	return (
-		<div className="Loading">
+		<div className={!icon ? "Loading" : ""}>
 			<CircularProgress />
 		</div>
 	);
