@@ -58,7 +58,7 @@ const LeafletMap = (props) => {
 	const mapRef = useRef();
 	const geoJsonRef = useRef();
 	const [selectedLayer, setSelectedLayer] = useState(null);
-	const [isMapFlying, setIsMapFlying] = useState(false);
+	const [isMapFlying, setIsMapFlying] = useState(true);
 
 	const getRegionColor = (index) => {
 		if (index > 1) return COLOR_PALETTE.vvred;
