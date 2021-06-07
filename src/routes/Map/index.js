@@ -13,7 +13,7 @@ import IndiaGeoJson from "../../assets/india.simplified.json";
 // Original data obtained from: https://github.com/markmarkoh/datamaps
 // Simplified using: https://mapshaper.org/
 
-const Map = () => {
+const Map = ({ isAdmin = false }) => {
 	const history = useHistory();
 
 	const [regions, setRegions] = useState({});
@@ -48,7 +48,7 @@ const Map = () => {
 
 				// **********************
 				// TEMP: AVERAGE SEVERITY COUNTING
-				console.log("SEVERITY", regionsResponse[key].name, severityIndex);
+				if (isAdmin) console.log("SEVERITY", regionsResponse[key].name, severityIndex);
 				// **********************
 
 				// combine severity index calculations (covid data) to geojson
