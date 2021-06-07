@@ -16,15 +16,15 @@ const Contact = () => {
 			</div>
 
 			<div className="contact-body">
-				<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeOcJiv-7rYrjpQDiwh9lx_87e4pE4owJBISN4ezVmI8qsmAQ/viewform?embedded=true"
-					width="640" height="440" frameBorder="0" marginHeight="0" marginWidth="0" className="contact-form">Loading…</iframe>
+				<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfrh6FstBQ9kL9YytJcsYiQcERkUKhMuO1Uh2aNbQKxcW0ghg/viewform?embedded=true"
+					width="640" height="1000" frameBorder="0" marginHeight="0" marginWidth="0" className="contact-form">Loading…</iframe>
 			</div>
 			<div className="contact-request">
 				<div>If you are a charity, and wish to be featured on our site, </div>
 				<Button
 					variant="contained"
 					className="contact-request-button"
-					onClick={() => history.push("/about")}
+					href="https://docs.google.com/forms/d/e/1FAIpQLSeVZoLZQI5WD2L1plHtiyXwNR8JXRSs_GYfMq4ZAlAfVoLxNA/viewform?usp=sf_link"
 				>send a request</Button>
 			</div>
 			<Footer />
