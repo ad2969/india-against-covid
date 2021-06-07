@@ -5,8 +5,7 @@ import {
 	List,
 	ListItem,
 	ListItemIcon,
-	ListItemText,
-	Typography
+	ListItemText
 } from "@material-ui/core";
 
 import {
