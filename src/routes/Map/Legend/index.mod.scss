@@ -1,0 +1,18 @@
+.map-legend {
+    background: $white;
+    bottom: 2rem;
+    left: 2rem;
+    position: absolute !important;
+    max-width: calc(100vw - 4rem);
+    width: 15rem;
+    z-index: 999;
+
+    .MuiTypography-root {
+        font-size: 0.75rem;
+        line-height: 1;
+    }
+
+    @include for-phone-landscape-up {
+        width: 20rem;
+    }
+}

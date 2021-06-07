@@ -4,6 +4,7 @@ import {
 	MapContainer,
 	TileLayer
 } from "react-leaflet";
+import Legend from "../Legend";
 import "./index.mod.scss";
 
 const MAPBOX_USER = "onlinkers";
@@ -62,12 +63,12 @@ const LeafletMap = (props) => {
 
 	const getRegionColor = (index) => {
 		if (index > 1) return COLOR_PALETTE.vvred;
-		else if (index > 0.7) return COLOR_PALETTE.vred;
+		// else if (index > 0.4) return COLOR_PALETTE.vred;
 		else if (index > 0.3) return COLOR_PALETTE.red;
 		// else if (index > 0.3) return COLOR_PALETTE.orgred;
-		else if (index > 0.2) return COLOR_PALETTE.org;
-		else if (index > 0.15) return COLOR_PALETTE.orgyel;
-		else if (index > 0.1) return COLOR_PALETTE.yel;
+		else if (index > 0.1) return COLOR_PALETTE.org;
+		// else if (index > 0.15) return COLOR_PALETTE.orgyel;
+		// else if (index > 0.1) return COLOR_PALETTE.yel;
 		else return COLOR_PALETTE.default;
 	};
 
@@ -139,46 +140,48 @@ const LeafletMap = (props) => {
 	}, [loaded, selectedRegionKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
-		<div className={`leaflet-map-container ${sidebarOpen && "sidebar-open"}`}>
-			<MapContainer
-				className="LeafletMap"
-				center={DEFAULT_CENTER}
-				maxBounds={DEFAULT_BOUNDS}
-				minZoom={5}
-				zoom={6}
-				preferCanvas={true}
-				scrollWheelZoom={true}
-				whenCreated={(mapInstance) => {
-					mapRef.current = mapInstance;
-					setLoaded(true);
-				}}
-			>
-				<TileLayer
-					url={`https://api.mapbox.com/styles/v1/${MAPBOX_USER}/${MAPBOX_STYLE_ID}/tiles/256/{z}/{x}/{y}?access_token=${MAPBOX_TOKEN}`}
-					attribution="Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>"
-				/>
-				{loaded && <GeoJSON
-					ref={geoJsonRef}
-					data={data}
-					attribution="&copy; credits due..."
-					eventHandlers={{
-						mouseover: handleMouseoverRegion,
-						mouseout: handleMouseoutRegion,
-						// moveend: handleMapMoveEnd, * THIS DOESN'T WORK SOMEHOW. CHECK "USEEFFECT"
-						click: handleClickRegion
+		<React.Fragment>
+			<div className={`leaflet-map-container ${sidebarOpen && "sidebar-open"}`}>
+				<MapContainer
+					className="LeafletMap"
+					center={DEFAULT_CENTER}
+					maxBounds={DEFAULT_BOUNDS}
+					minZoom={5}
+					zoom={6}
+					preferCanvas={true}
+					scrollWheelZoom={true}
+					whenCreated={(mapInstance) => {
+						mapRef.current = mapInstance;
+						setLoaded(true);
 					}}
-					onEachFeature={(feature, layer) => {
+				>
+					<TileLayer
+						url={`https://api.mapbox.com/styles/v1/${MAPBOX_USER}/${MAPBOX_STYLE_ID}/tiles/256/{z}/{x}/{y}?access_token=${MAPBOX_TOKEN}`}
+						attribution="Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>"
+					/>
+					{loaded && <GeoJSON
+						ref={geoJsonRef}
+						data={data}
+						attribution="&copy; credits due..."
+						eventHandlers={{
+							mouseover: handleMouseoverRegion,
+							mouseout: handleMouseoutRegion,
+							// moveend: handleMapMoveEnd, * THIS DOESN'T WORK SOMEHOW. CHECK "USEEFFECT"
+							click: handleClickRegion
+						}}
+						onEachFeature={(feature, layer) => {
 						// set the layer id based on the region id
-						layer._leaflet_id = feature.properties.code;
-						// set layer styles for every layer
-						// get the fill color based on the severity index
-						const color = getRegionColor(feature.properties.severityIndex);
-						layer.setStyle({ ...DEFAULT_STYLES, fillColor: color });
-					}}
-				/>}
-			</MapContainer>
-
-		</div>
+							layer._leaflet_id = feature.properties.code;
+							// set layer styles for every layer
+							// get the fill color based on the severity index
+							const color = getRegionColor(feature.properties.severityIndex);
+							layer.setStyle({ ...DEFAULT_STYLES, fillColor: color });
+						}}
+					/>}
+				</MapContainer>
+			</div>
+			{loaded && <Legend getColor={getRegionColor} />}
+		</React.Fragment>
 	);
 };
 
