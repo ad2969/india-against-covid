@@ -49,7 +49,7 @@ const Legend = ({ getColor }) => {
 					</ListItem>
 					<br/><Divider />
 					<ListItem>
-						<ListItemText secondary="The percentage index was calculated by comparing the number of active cases versus the region&apos;s estimated population" />
+						<ListItemText secondary="The percentage index used are calculated by comparing the number of active cases versus the region&apos;s estimated population" />
 					</ListItem>
 				</List>
 			</Collapse>
