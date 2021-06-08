@@ -36,7 +36,7 @@ function Routes () {
 
 				{/* PUBLIC ROUTES */}
 				<Route exact path="/admin" component={AdminLogin} redirect />
-				<Route exact path="/home" component={Map} />
+				<Route exact path="/home" component={Map} isAdmin />
 				<Route exact path="/about" component={About} />
 				<Route exact path="/contact" component={Contact} />
 				<Route exact path="/developers" component={Developers} />

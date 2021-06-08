@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { CircularProgress } from "@material-ui/core";
 import MapHeader from "../../components/Header/map";
 import LeafletMap from "./Leaflet";
 import Region from "./Region";
+import Loading from "../../components/Loading";
+import Error from "../../components/Error";
 import "./index.mod.scss";
 
 import { isEmpty } from "../../utils";
@@ -12,7 +13,7 @@ import IndiaGeoJson from "../../assets/india.simplified.json";
 // Original data obtained from: https://github.com/markmarkoh/datamaps
 // Simplified using: https://mapshaper.org/
 
-const Map = () => {
+const Map = ({ isAdmin = false }) => {
 	const history = useHistory();
 
 	const [regions, setRegions] = useState({});
@@ -20,6 +21,7 @@ const Map = () => {
 	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
 
 	const [error, setError] = useState(false);
+	const [regionError, setRegionError] = useState(false);
 	const [basicDataLoaded, setBasicDataLoaded] = useState(false);
 	const [regionDataLoaded, setRegionDataLoaded] = useState(false);
 	const [mapLoaded, setMapLoaded] = useState(false);
@@ -30,13 +32,6 @@ const Map = () => {
 			const regionsResponse = await fetchRegions();
 			console.debug("** API GET: COVID DATA");
 			const covidDataResponse = await fetchCovidDatabase();
-
-			// **********************
-			// TEMP: AVERAGE SEVERITY COUNTING
-			let average = 0;
-			let averageNeg = 0;
-			let averagePos = 0;
-			// **********************
 
 			for (const key in regionsResponse) {
 				// combine covid data into region data
@@ -53,9 +48,7 @@ const Map = () => {
 
 				// **********************
 				// TEMP: AVERAGE SEVERITY COUNTING
-				average += severityIndex;
-				if (severityIndex < 0) averageNeg += severityIndex;
-				else averagePos += severityIndex;
+				if (isAdmin) console.log("SEVERITY", regionsResponse[key].name, severityIndex);
 				// **********************
 
 				// combine severity index calculations (covid data) to geojson
@@ -69,15 +62,10 @@ const Map = () => {
 				feature.properties.severityIndex = severityIndex;
 			}
 
-			// **********************
-			// TEMP: AVERAGE SEVERITY COUNTING
-			console.log("AVERAGES", average, averageNeg, averagePos, Object.keys(regionsResponse).length);
-			// **********************
-
 			setRegions(regionsResponse);
 			setBasicDataLoaded(covidDataResponse.lastUpdatedAtApify);
 		} catch (err) {
-			setError(true);
+			setError(err.message || true);
 			console.error(err);
 		}
 	};
@@ -89,21 +77,16 @@ const Map = () => {
 			setRegionDataCharities(charitiesInRegion);
 			setRegionDataLoaded(true);
 		} catch (err) {
-			setError(true);
+			setRegionError(true);
 			console.error(err);
 		}
 	};
 
 	const refreshPage = async () => {
-		try {
-			// refresh region data
-			await getRegions();
-			// set the query to none
-			history.replace({ region: "" });
-		} catch (err) {
-			setError(true);
-			console.error(err);
-		}
+		// refresh region data
+		await getRegions();
+		// set the query to none
+		history.replace({ region: "" });
 	};
 
 	const handleSelectMapRegion = (regionKey = null) => {
@@ -133,10 +116,8 @@ const Map = () => {
 		// do nothing if error exists, or if basic data hasn't been loaded
 		if (error || !basicDataLoaded) return;
 		// set to loaded if no region selected
-		if (!selectedRegionKey) {
-			setRegionDataLoaded(true);
-			return;
-		}
+		setRegionDataLoaded(false);
+		if (!selectedRegionKey) return;
 		// fetch all required data
 		getRegionDataCharities(selectedRegionKey);
 	}, [selectedRegionKey]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -145,24 +126,28 @@ const Map = () => {
 		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
 			<div className="map-container">
-				{!!basicDataLoaded && <LeafletMap
-					loaded={mapLoaded}
-					setLoaded={setMapLoaded}
-					data={IndiaGeoJson}
-					selectedRegionKey={selectedRegionKey}
-					handleSelectMapRegion={handleSelectMapRegion}
-					sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
-				/>}
+				{error && <Error message={error} />}
+				{!error && (basicDataLoaded
+					? <LeafletMap
+						loaded={mapLoaded}
+						setLoaded={setMapLoaded}
+						data={IndiaGeoJson}
+						selectedRegionKey={selectedRegionKey}
+						handleSelectMapRegion={handleSelectMapRegion}
+						sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
+					/>
+					: <Loading />)}
 				<div className={`map-sidebar ${selectedRegionKey && "active"}`}>
-					{regionDataLoaded && selectedRegionKey
+					{selectedRegionKey
 						? <Region
-							error={error}
+							error={regionError}
+							loaded={regionDataLoaded}
 							refresh={() => { handleSelectMapRegion(); }}
 							lastUpdated={basicDataLoaded}
 							selectedRegionInfo={regions[selectedRegionKey]}
 							selectedRegionCharities={regionDataCharities}
 						/>
-						: <CircularProgress />}
+						: <Loading />}
 				</div>
 			</div>
 		</div>
