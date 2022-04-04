@@ -12,6 +12,10 @@ import { fetchRegions, fetchRegionCharities, fetchCovidDatabase } from "../../se
 import IndiaGeoJson from "../../assets/india.simplified.json";
 // Original data obtained from: https://github.com/markmarkoh/datamaps
 // Simplified using: https://mapshaper.org/
+import LAST_DB_ENTRY_AVAILABLE from "../../assets/region.data.json";
+// Region data hosted on firebase
+import LAST_COVID_DATA_ENTRY_AVAILABLE from "../../assets/covid.data.json";
+// API may be deprecated: https://github.com/zpelechova/covid-in/blob/master/README.md
 
 const Map = ({ isAdmin = false }) => {
 	const history = useHistory();
@@ -21,18 +25,45 @@ const Map = ({ isAdmin = false }) => {
 	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
 
 	const [dbError, setDBError] = useState(false);
+	const [apiError, setAPIError] = useState(false);
 	const [regionError, setRegionError] = useState(false);
 	const [basicDataLoaded, setBasicDataLoaded] = useState(false);
 	const [regionDataLoaded, setRegionDataLoaded] = useState(false);
 	const [mapLoaded, setMapLoaded] = useState(false);
 
 	const getRegions = async () => {
+		let regionsResponse = {};
+		let covidDataResponse = {};
+
 		try {
 			console.debug("** API GET: FIREBASE REGION DATA");
-			const regionsResponse = await fetchRegions();
-			console.debug("** API GET: COVID DATA");
-			const covidDataResponse = await fetchCovidDatabase();
+			regionsResponse = await fetchRegions();
+		} catch (err) {
+			setDBError(err.message || true);
+			setRegionError(true);
+			console.error(err);
+		}
 
+		// backup (for showcase purposes)
+		if (dbError) {
+			regionsResponse = LAST_DB_ENTRY_AVAILABLE;
+			setRegionError(false);
+		}
+
+		try {
+			console.debug("** API GET: COVID DATA");
+			covidDataResponse = await fetchCovidDatabase();
+		} catch (err) {
+			setAPIError(err.message || true);
+			console.error(err);
+		}
+
+		// backup (for showcase purposes)
+		if (apiError || covidDataResponse?.regionData?.length === 0) {
+			covidDataResponse = LAST_COVID_DATA_ENTRY_AVAILABLE;
+		}
+
+		try {
 			for (const key in regionsResponse) {
 				// combine covid data into region data
 				const data = Object.values(covidDataResponse.regionData).find((region) => region.region === regionsResponse[key].name);
@@ -61,13 +92,12 @@ const Map = ({ isAdmin = false }) => {
 				// this will directly edit the json object getting passed
 				feature.properties.severityIndex = severityIndex;
 			}
-
-			setRegions(regionsResponse);
-			setBasicDataLoaded(covidDataResponse.lastUpdatedAtApify);
 		} catch (err) {
-			setDBError(err.message || true);
 			console.error(err);
 		}
+
+		setRegions(regionsResponse);
+		setBasicDataLoaded(covidDataResponse.lastUpdatedAtApify);
 	};
 
 	const getRegionDataCharities = async (regionKey = null) => {
@@ -75,10 +105,10 @@ const Map = ({ isAdmin = false }) => {
 			console.debug("** API GET: FIREBASE CHARITY DATA FOR REGION", regionKey);
 			const charitiesInRegion = await fetchRegionCharities(regionKey, true);
 			setRegionDataCharities(charitiesInRegion);
-			setRegionDataLoaded(true);
 		} catch (err) {
-			setRegionError(true);
 			console.error(err);
+		} finally {
+			setRegionDataLoaded(true);
 		}
 	};
 
@@ -126,7 +156,7 @@ const Map = ({ isAdmin = false }) => {
 		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
 			<div className="map-container">
-				{dbError && <Error message={dbError} />}
+				{dbError && <Error errors={[dbError, apiError]} />}
 				{!basicDataLoaded && !dbError
 					? <Loading />
 					: <LeafletMap
