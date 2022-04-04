@@ -50,6 +50,7 @@ const LeafletMap = (props) => {
 	const {
 		loaded,
 		setLoaded,
+		dbError,
 		data,
 		selectedRegionKey,
 		handleSelectMapRegion,
@@ -159,7 +160,7 @@ const LeafletMap = (props) => {
 						url={`https://api.mapbox.com/styles/v1/${MAPBOX_USER}/${MAPBOX_STYLE_ID}/tiles/256/{z}/{x}/{y}?access_token=${MAPBOX_TOKEN}`}
 						attribution="Map data &copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors, <a href=&quot;https://creativecommons.org/licenses/by-sa/2.0/&quot;>CC-BY-SA</a>, Imagery &copy; <a href=&quot;https://www.mapbox.com/&quot;>Mapbox</a>"
 					/>
-					{loaded && <GeoJSON
+					{loaded && !dbError && <GeoJSON
 						ref={geoJsonRef}
 						data={data}
 						attribution="&copy; credits due..."

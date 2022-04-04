@@ -13,13 +13,15 @@ import Developers from "./Developers";
 import AdminHome from "./Admin";
 import AdminLogin from "./Admin/login";
 
-import { auth } from "../services/firebase";
+import { FIREBASE_ERROR, auth } from "../services/firebase";
 
 function Routes () {
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [isAdminChecked, setIsAdminChecked] = useState(false);
 
 	useEffect(() => {
+		if (FIREBASE_ERROR) return;
+
 		auth.onAuthStateChanged((user) => {
 			console.debug("User state changed!", String(Boolean(user)));
 			if (!isAdminChecked) setIsAdminChecked(true);

@@ -20,7 +20,7 @@ const Map = ({ isAdmin = false }) => {
 	const [regionDataCharities, setRegionDataCharities] = useState(null);
 	const [selectedRegionKey, setSelectedRegionKey] = useState(null);
 
-	const [error, setError] = useState(false);
+	const [dbError, setDBError] = useState(false);
 	const [regionError, setRegionError] = useState(false);
 	const [basicDataLoaded, setBasicDataLoaded] = useState(false);
 	const [regionDataLoaded, setRegionDataLoaded] = useState(false);
@@ -65,7 +65,7 @@ const Map = ({ isAdmin = false }) => {
 			setRegions(regionsResponse);
 			setBasicDataLoaded(covidDataResponse.lastUpdatedAtApify);
 		} catch (err) {
-			setError(err.message || true);
+			setDBError(err.message || true);
 			console.error(err);
 		}
 	};
@@ -97,7 +97,7 @@ const Map = ({ isAdmin = false }) => {
 	// ONLY ON FIRST LOAD AND PAGE QUERY CHANGES
 	useEffect(() => {
 		// do nothing if error exists
-		if (error) return;
+		if (dbError) return;
 
 		// get search query, if any
 		const urlParams = new URLSearchParams(history.location.search);
@@ -114,7 +114,7 @@ const Map = ({ isAdmin = false }) => {
 	// ON SELECT REGIONS
 	useEffect(() => {
 		// do nothing if error exists, or if basic data hasn't been loaded
-		if (error || !basicDataLoaded) return;
+		if (dbError || !basicDataLoaded) return;
 		// set to loaded if no region selected
 		setRegionDataLoaded(false);
 		if (!selectedRegionKey) return;
@@ -126,17 +126,18 @@ const Map = ({ isAdmin = false }) => {
 		<div className="Page MapPage">
 			<MapHeader reloadPage={refreshPage} />
 			<div className="map-container">
-				{error && <Error message={error} />}
-				{!error && (basicDataLoaded
-					? <LeafletMap
+				{dbError && <Error message={dbError} />}
+				{!basicDataLoaded && !dbError
+					? <Loading />
+					: <LeafletMap
+						dbError={dbError}
 						loaded={mapLoaded}
 						setLoaded={setMapLoaded}
 						data={IndiaGeoJson}
 						selectedRegionKey={selectedRegionKey}
 						handleSelectMapRegion={handleSelectMapRegion}
 						sidebarOpen={Boolean(selectedRegionKey && regionDataCharities)}
-					/>
-					: <Loading />)}
+					/>}
 				<div className={`map-sidebar ${selectedRegionKey && "active"}`}>
 					{selectedRegionKey
 						? <Region
