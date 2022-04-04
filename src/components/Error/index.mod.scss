@@ -4,4 +4,6 @@
 
     @include flex-center;
     flex-direction: column;
+    z-index: 999;
+    pointer-events:none;
 }
